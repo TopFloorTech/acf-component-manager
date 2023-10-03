@@ -13,8 +13,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-//use AcfComponentManager\DisplayManager;
-
 class Admin {
 
 	/**
@@ -231,55 +229,6 @@ class Admin {
 	}
 
 	/**
-	 * Register settings.
-	 *
-	 * @since 0.0.1
-	 */
-	public function settings_init() {
-
-		add_settings_section(
-			'acf_component_manager_settings',
-			__( 'ACF Component Manager settings', 'acf-component-manager' ),
-			array( $this, 'plugin_settings_section_callback' ),
-			'acf-component-manager-plugin-options'
-		);
-
-		add_settings_field(
-			'acf_component_manager_dev_mode',
-			__( 'Dev mode', 'acf-component-manager' ),
-			array( $this, 'plugin_settings_dev_mode_callback' ),
-			'acf-component-manager-plugin-options',
-			'acf_component_manager_settings'
-		);
-
-		register_setting( 'acf-component-manager-options', 'acf_component_manager_dev_mode' );
-
-		add_settings_section(
-			'acf_component_manager_component_settings',
-			__( 'Component settings', 'acf-component-manager' ),
-			array( $this, 'component_settings_section_callback' ),
-			'acf-component-manager-component-options'
-		);
-
-		$components = $this->get_theme_components();
-
-		foreach ( $components as $index => $component ) {
-			add_settings_field(
-				'acf_component_manager_component_settings_' . $component['name'],
-				$component['name'],
-				array( $this, 'component_settings_callback' ),
-				'acf-component-manager-component-options',
-				'acf_component_manager_component_options',
-				array(
-					'id' => 'component-' . $component['name'],
-				)
-			);
-			register_setting( 'acf-component-manager-component-options', 'acf_component_manager_component_settings_' . $component['name'] );
-		}
-
-	}
-
-	/**
 	 * Option Manager.
 	 * Fires when update_option() is complete.
 	 *
@@ -291,40 +240,6 @@ class Admin {
 	public function option_manager( $old_value, $new_value, $option_name ) {
 		$settings = $this->get_settings();
 
-	}
-
-	/**
-	 * Get theme components.
-	 *
-	 * @since 0.0.1
-	 *
-	 * @return array
-	 *   An array of eligible theme components.
-	 */
-	public function get_theme_components() {
-		$components = array();
-
-		$settings = $this->settings;
-
-		if ( ! isset( $settings['active_theme_directory'] ) ) {
-			return $components;
-		}
-
-		foreach ( glob( $settings['active_theme_directory'] . "/components/*/functions.php" ) as $functions ) {
-			$component = get_file_data( $functions, array( 'Component' => 'Component' ) );
-			// Get all eligible components.  Components should be in the components theme directory and include the File Header 'Component'.
-			if ( ! empty( $component['Component'] ) ) {
-				$component_path = str_replace( $settings['active_theme_directory'] . '/components/', '', $functions );
-				$component_path = str_replace( '/functions.php', '', $component_path );
-
-				$components[] = array(
-					'name' => $component['Component'],
-					'path' => $component_path,
-				);
-			}
-		}
-
-		return $components;
 	}
 
 	/**

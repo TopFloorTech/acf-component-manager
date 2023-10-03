@@ -3,12 +3,12 @@
 namespace AcfComponentManager\Form;
 
 /**
- * Contains class for admin form.
+ * Contains class for SettingsForm.
  */
-class AdminForm extends FormBase {
+class SettingsForm extends FormBase {
 
 	/**
-	 * Provides the AdminForm form.
+	 * Provides the SettingsForm form.
 	 *
 	 * @param array $settings
 	 *   The settings.
@@ -18,7 +18,7 @@ class AdminForm extends FormBase {
 		<form method="post" action="<?php print $this->get_form_url(); ?>">
 			<?php wp_nonce_field( 'acf_component_manager', 'save' ); ?>
 			<input type="hidden" name="action" value="save">
-			<input type="hidden" name="callback" value="admin">
+			<input type="hidden" name="callback" value="manage_settings">
 			<table class="form-table">
 				<tr class="form-field form-required">
 					<th class="row">

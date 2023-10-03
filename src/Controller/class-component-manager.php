@@ -4,7 +4,7 @@
  * Contains Component Manager class.
  */
 
-namespace AcfComponentManager;
+namespace AcfComponentManager\Controller;
 
 // If this file is called directly, short.
 if ( ! defined( 'WPINC' ) ) {
@@ -28,9 +28,16 @@ class ComponentManager {
 	/**
 	 * Stored components option name.
 	 *
-	 * @cont string
+	 * @const string
 	 */
 	const STORED_COMPONENTS_OPTION_NAME = 'acf_component_manager_components';
+
+	/**
+	 * Settings option name.
+	 *
+	 * @const string
+	 */
+	const SETTINGS_OPTION_NAME = 'acf-component-manager-settings';
 
 	/**
 	 * Initialize the class and set its properties.
@@ -61,15 +68,17 @@ class ComponentManager {
 			case 'view':
 				$view = new ComponentView( $form_url );
 				$theme_components = $this->get_theme_components();
-				$view_components = array();
+				$mew_components = array();
 				if ( ! empty( $theme_components ) ) {
 					foreach( $theme_components as $theme_component ) {
-						$theme_component['stored'] = $this->get_stored_component( $theme_component['hash']);
-						$view_components[$theme_component['hash']] = $theme_component;
+						$stored_component = $this->get_stored_component( $theme_component['hash']);
+						if ( empty( $stored_component ) ) {
+							$mew_components[] = $theme_component;
+						}
+
 					}
 				}
-				//$view->view( $view_components );
-				$view->view( $this->get_stored_components() );
+				$view->view( $this->get_stored_components(), $mew_components );
 				break;
 
 			case 'edit':
@@ -148,7 +157,12 @@ class ComponentManager {
 	 * @return array $settings
 	 */
 	private function get_settings() {
-		return get_option( 'acf-component-manager-settings' );
+		$settings = array();
+		$stored_settings = get_option( self::SETTINGS_OPTION_NAME );
+		if ( $stored_settings ) {
+			$settings = unserialize( $stored_settings );
+		}
+		return $settings;
 	}
 
 	/**
@@ -275,6 +289,10 @@ class ComponentManager {
 	public function load_components() {
 		$components = $this->get_stored_components();
 		$settings = $this->get_settings();
+
+		if ( $settings['dev_mode'] ) {
+			return;
+		}
 		if ( ! empty( $components ) ) {
 			foreach ( $components as $component ) {
 				if ( ! $component['enabled'] ) {
@@ -293,7 +311,6 @@ class ComponentManager {
 					$definition = json_decode( $file, true );
 					acf_add_local_field_group( reset( $definition ) );
 				}
-
 			}
 		}
  	}

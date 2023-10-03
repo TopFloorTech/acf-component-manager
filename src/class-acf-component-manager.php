@@ -11,9 +11,8 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-use AcfComponentManager\Admin;
-use AcfComponentManager\Loader;
-use AcfComponentManager\ComponentManager;
+use AcfComponentManager\Controller\ComponentManager;
+use AcfComponentManager\Controller\SettingsManager;
 
 class AcfComponentManager {
 
@@ -60,13 +59,22 @@ class AcfComponentManager {
 	protected $loader;
 
 	/**
-	 * AcfComponentManager\ComponentManager definition.
+	 * AcfComponentManager\Controller\ComponentManager definition.
 	 *
-	 * @var \AcfComponentManager\ComponentManager
+	 * @var \AcfComponentManager\Controller\ComponentManager
 	 *
 	 * @since 0.0.1
 	 */
 	protected $componentManager;
+
+	/**
+	 * AcfComponentManager\Controller\SettingsManager definition.
+	 *
+	 * @var \AcfComponentManager\Controller\SettingsManager
+	 *
+	 * @since 0.0.1
+	 */
+	protected $settingsManager;
 
 	/**
 	 * Options.
@@ -104,10 +112,10 @@ class AcfComponentManager {
 	 */
 	private function load_dependencies() {
 
-		//$this->admin = new Admin( $this->plugin_name, $this->version );
 		$this->admin = new Admin();
 		$this->loader = new Loader();
 		$this->componentManager = new ComponentManager();
+		$this->settingsManager = new SettingsManager();
 
 	}
 
@@ -140,7 +148,9 @@ class AcfComponentManager {
 		$this->loader->add_action( 'acf/init', $component_manager, 'load_components' );
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_components', $component_manager, 'render_page', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_components', $component_manager, 'save', 10, 1 );
-
+		$settings_manager = $this->settingsManager;
+		$this->loader->add_action( 'acf_component_manager_render_page_manage_settings', $settings_manager, 'render_page', 10, 2 );
+		$this->loader->add_action( 'acf_component_manager_save_manage_settings', $settings_manager, 'save', 10, 1 );
 	}
 
 	/**
@@ -167,9 +177,9 @@ class AcfComponentManager {
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @return    \src\Loader    Orchestrates the hooks of the plugin.
-	 *@since     0.0.1
+	 * @since     0.0.1
 	 *
+	 * @return   \AcfComponentManager\Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;

@@ -11,8 +11,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-use \AcfComponentManager\ComponentManager;
-
 class DisplayManager {
 
 	/**
@@ -25,12 +23,19 @@ class DisplayManager {
 	protected $slug;
 
 	/**
-	 * AcfComponentManager\ComponentManager definition.
+	 * AcfComponentManager\Controller\ComponentManager definition.
 	 *
+	 * @var \AcfComponentManager\Controller\ComponentManager
 	 * @since 0.0.1
-	 * @var \AcfComponentManager\ComponentManager
 	 */
 	protected $componentManager;
+
+	/**
+	 * AcfComponentManager\Controller\SettingsManager definition.
+	 *
+	 * @var \AcfComponentManager\Controller\SettingsManager
+	 */
+	protected $settingsManager;
 
 	/**
 	 * Constructs a new DisplayManager object.

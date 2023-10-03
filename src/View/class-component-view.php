@@ -15,14 +15,29 @@ class ComponentView extends ViewBase {
 	/**
 	 * Provides the ComponentView view.
 	 *
-	 * @param array $components
+	 * @param array $stored_components
 	 *   An array of theme components.
+	 * @param array $new_components
+	 *   An array of components not stored.
 	 */
-	public function view( array $components ) {
+	public function view( array $stored_components, array $new_components ) {
 
-		if ( ! empty( $components ) ) {
-			foreach( $components as $component ) {
-				print '<h3>' . $component['name'] . '</h3>';
+		if ( empty( $stored_components ) && empty( $new_components ) ) {
+			print '<p>' . __( 'No components found.', 'acf-component-manager' ) . '</p>';
+		}
+
+		else {
+			$this->update_action( 'edit' );
+			?>
+			<a href="<?php print $this->get_form_url(); ?>" class="button"><?php print __( 'Edit components', 'acf-component-manager' ); ?></a>
+			<?php
+		}
+
+		if ( ! empty( $stored_components ) ) {
+			print '<h3>' . __( 'Components currently managed', 'acf-component-manager' ) . '</h3>';
+
+			foreach( $stored_components as $component ) {
+				print '<h4>' . $component['name'] . '</h4>';
 				print '<p><strong>' . __( 'File name', 'acf-component-manager' ) . ': </strong> ' . $component['file'] . '</p>';
 				print '<p><strong>' . __( 'Enabled', 'acf-component-manager' ) . ': </strong>';
 				if ( $component['enabled'] ) {
@@ -32,12 +47,16 @@ class ComponentView extends ViewBase {
 					print 'No';
 				}
 				print '</p>';
+				print '<hr>';
 			}
 		}
 
-		$this->update_action( 'edit' );
-		?>
-		<a href="<?php print $this->get_form_url(); ?>" class="button"><?php print __( 'Edit components', 'acf-component-manager' ); ?></a>
-		<?php
+		if ( ! empty( $new_components ) ) {
+			print '<h3>' . __( 'New theme components', 'acf-component-manager' ) . '</h3>';
+			foreach( $new_components as $component ) {
+				print '<h4>' . $component['name'] . '</h4>';
+				print '<hr>';
+			}
+		}
 	}
 }
