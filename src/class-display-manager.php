@@ -40,6 +40,7 @@ class DisplayManager {
 	/**
 	 * Constructs a new DisplayManager object.
 	 *
+	 * @since 0.0.1
 	 * @param string $slug
 	 *   The slug.
 	 */
@@ -50,9 +51,10 @@ class DisplayManager {
 
 	/**
 	 * Load dependencies.
+	 *
+	 * @since 0.0.1
 	 */
 	private function load_dependencies() {
-		//$this->componentManager = new ComponentManager();
 	}
 
 	/**
@@ -69,14 +71,14 @@ class DisplayManager {
 		ob_start();
 		?>
 		<div class="wrap">
-			<h1>ACF Component Manager</h1>
+			<h1><?php print __( 'ACF Component Manager', 'acf-component-manager' ); ?></h1>
 			<?php $this->render_tabs( $current_tab ); ?>
 			<?php
 
 			switch ( $current_tab ) {
 				case 'dashboard':
 					?>
-					<h2> Dashboard </h2>
+					<h2> <?php print __( 'Dashboard', 'acf-component-manager' ); ?></h2>
 					<?php
 
 					break;
@@ -94,13 +96,13 @@ class DisplayManager {
 	/**
 	 * Get tabs
 	 *
-	 * @since 2.0.0
+	 * @since 0.0.1
 	 * @param string $current_tab The current tab.
 	 */
 	public function render_tabs( $current_tab ) {
 		$tabs = [
 			'dashboard' => __( 'Dashboard', 'acf-component-manager' ),
-			'import' => __( 'Import', 'acf-component-manager' ),
+			//'import' => __( 'Import', 'acf-component-manager' ),
 		];
 
 		$tabs = apply_filters( 'acf_component_manager_tabs', $tabs );

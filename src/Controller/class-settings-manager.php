@@ -29,20 +29,12 @@ class SettingsManager {
 	protected $settings;
 
 	/**
-	 * Settings option name.
-	 *
-	 * @const string
-	 */
-	const SETTINGS_OPTION_NAME = 'acf-component-manager-settings';
-
-	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    0.0.1
 	 */
 	public function __construct() {
 		$this->settings = $this->get_settings();
-		add_filter('acf_component_manager_tabs', [$this, 'add_menu_tab']);
 	}
 
 	/**
@@ -69,9 +61,9 @@ class SettingsManager {
 	 */
 	private function get_settings() {
 		$settings = array();
-		$stored_settings = get_option( self::SETTINGS_OPTION_NAME );
+		$stored_settings = get_option( SETTINGS_OPTION_NAME );
 		if ( $stored_settings ) {
-			$settings = unserialize( $stored_settings );
+			$settings = $stored_settings;
 		}
 		return $settings;
 	}
@@ -113,13 +105,12 @@ class SettingsManager {
 	public function save( array $form_data ) {
 		$dev_mode = false;
 		$settings = $this->get_settings();
-		//die( print_r( $settings ) );
 		if ( isset( $form_data['dev_mode'] ) ) {
 			$dev_mode = $form_data['dev_mode'];
 		}
 		$settings['dev_mode'] = $dev_mode;
 
-		update_option( self::SETTINGS_OPTION_NAME, serialize( $settings ) );
+		update_option( SETTINGS_OPTION_NAME, $settings );
 
 	}
 

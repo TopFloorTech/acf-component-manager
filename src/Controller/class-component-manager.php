@@ -13,6 +13,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 use AcfComponentManager\Form\ComponentForm;
 use AcfComponentManager\View\ComponentView;
+use AcfComponentManager\Notices;
 
 class ComponentManager {
 
@@ -25,19 +26,7 @@ class ComponentManager {
 	 */
 	protected $settings;
 
-	/**
-	 * Stored components option name.
-	 *
-	 * @const string
-	 */
-	const STORED_COMPONENTS_OPTION_NAME = 'acf_component_manager_components';
 
-	/**
-	 * Settings option name.
-	 *
-	 * @const string
-	 */
-	const SETTINGS_OPTION_NAME = 'acf-component-manager-settings';
 
 	/**
 	 * Initialize the class and set its properties.
@@ -46,9 +35,6 @@ class ComponentManager {
 	 */
 	public function __construct() {
 		$this->settings = $this->get_settings();
-		add_filter( 'acf_component_manager_tabs', array( $this, 'add_menu_tab' ) );
-		//add_action( 'acf_component_manager_render_page_manage_components', array( $this, 'render_page' ), 10, 2 );
-		//add_action( 'acf_component_manager_save_manage_components', array( $this, 'save' ), 10, 1 );
 	}
 
 	/**
@@ -131,14 +117,19 @@ class ComponentManager {
 			foreach ($theme_components as $component_properties) {
 				$hash = $component_properties['hash'];
 				$save_components[$hash] = $component_properties;
+
 				if ( isset( $form_data['file'][$hash] ) ) {
 					$save_components[$hash]['file'] = $form_data['file'][$hash];
 				}
 				else {
 					$save_components[$hash]['file'] = '';
 				}
+
 				if ( isset( $form_data['enabled'][$hash] ) ) {
 					$save_components[$hash]['enabled'] = $form_data['enabled'][$hash];
+					if ( $save_components[$hash]['file'] == '' ) {
+						$save_components[$hash]['enabled'] = false;
+					}
 				}
 				else {
 					$save_components[$hash]['enabled'] = false;
@@ -158,9 +149,9 @@ class ComponentManager {
 	 */
 	private function get_settings() {
 		$settings = array();
-		$stored_settings = get_option( self::SETTINGS_OPTION_NAME );
+		$stored_settings = get_option( SETTINGS_OPTION_NAME );
 		if ( $stored_settings ) {
-			$settings = unserialize( $stored_settings );
+			$settings = $stored_settings;
 		}
 		return $settings;
 	}
@@ -179,7 +170,6 @@ class ComponentManager {
 		$settings = $this->settings;
 
 		if ( ! isset( $settings['active_theme_directory'] ) ) {
-			print 'no $settings[active_theme_directory]';
 			return $components;
 		}
 
@@ -237,7 +227,7 @@ class ComponentManager {
 	 *   The components to store.
 	 */
 	public function set_stored_components( array $components ) {
-		update_option( self::STORED_COMPONENTS_OPTION_NAME, serialize( $components ) );
+		update_option( STORED_COMPONENTS_OPTION_NAME, serialize( $components ) );
 	}
 
 	/**
@@ -249,7 +239,7 @@ class ComponentManager {
 	public function get_stored_components() : array {
 		$components = array();
 
-		$stored_components = get_option( self::STORED_COMPONENTS_OPTION_NAME );
+		$stored_components = get_option( STORED_COMPONENTS_OPTION_NAME );
 
 		if ( $stored_components ) {
 			$components = unserialize( $stored_components );
@@ -282,6 +272,28 @@ class ComponentManager {
 	}
 
 	/**
+	 * Get enabled components.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @return array
+	 *   An array of enabled components.
+	 */
+	public function get_enabled_components() : array {
+		$enabled_components = array();
+
+		$stored_components = $this->get_stored_components();
+		if ( ! empty( $stored_components ) ) {
+			foreach ( $stored_components as $hash => $stored ) {
+				if ( isset( $stored['enabled'] ) && $stored['enabled'] ) {
+					$enabled_components[$hash] = $stored;
+				}
+			}
+		}
+		return $enabled_components;
+	}
+
+	/**
 	 * Load components.
 	 *
 	 * @since 0.0.1
@@ -290,7 +302,11 @@ class ComponentManager {
 		$components = $this->get_stored_components();
 		$settings = $this->get_settings();
 
-		if ( $settings['dev_mode'] ) {
+		if ( isset( $settings['dev_mode'] ) && $settings['dev_mode'] != true ) {
+			return;
+		}
+
+		if ( ! isset( $settings['active_theme_directory'] ) ) {
 			return;
 		}
 		if ( ! empty( $components ) ) {
@@ -304,16 +320,235 @@ class ComponentManager {
 				if ( ! isset( $component['file'] ) ) {
 					continue;
 				}
-				$path_pattern = $settings['active_theme_directory'] . "/{$component['path']}/assets/";
-				$file_path = $path_pattern .  $component['file'];
-				$file = file_get_contents( $file_path );
-				if ( $file ) {
-					$definition = json_decode( $file, true );
-					acf_add_local_field_group( reset( $definition ) );
+
+				$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				$file_path = $path_pattern . $component['file'];
+
+				try {
+					$file = file_get_contents( $file_path );
+					if ( $file ) {
+						$definition = json_decode( $file, true );
+						acf_add_local_field_group( reset( $definition ) );
+					}
+				}
+				catch ( \Exception $e ) {
+					print $e->getMessage();
 				}
 			}
 		}
  	}
+
+	/**
+	 * Dev mode switch.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param mixed $old_value
+	 *   The original value.
+	 * @param mixed $new_value
+	 *   The new value.
+	 * @param string $option
+	 *   The option name.
+	 */
+	public function dev_mode_switch( $old_value, $value, $option ) {
+
+		// If going into dev mode.
+		if (
+			isset( $old_value['dev_mode'] ) &&
+			! $old_value['dev_mode'] &&
+			isset( $new_value['dev_mode'] ) &&
+			$new_value['dev_mode']
+		) {
+			$this->dev_mode_activate();
+		}
+		// If going out of dev mode.
+		if (
+			isset( $old_value['dev_mode'] ) &&
+			$old_value['dev_mode'] &&
+			(
+				(
+					isset( $new_value['dev_mode'] ) &&
+					! $new_value['dev_mode']
+				)
+				||
+				! isset( $new_value['dev_mode'] )
+			)
+		) {
+			$this->dev_mode_deactivate();
+		}
+	}
+
+	/**
+	 * Activate dev mode.
+	 */
+	protected function dev_mode_activate() {
+		new Notices( 'dev_mode_activate' );
+		$components = $this->get_enabled_components();
+		$settings = $this->get_settings();
+		if ( !empty( $components ) ) {
+			foreach ( $components as $hash => $component ) {
+				$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				$file_path = $path_pattern .  $component['file'];
+				try {
+					$file = file_get_contents($file_path);
+					if ( $file ) {
+						$definition = json_decode($file, TRUE);
+						$groups = array();
+						if ( $key = $definition[0]['key']) {
+							//add_filter( 'acf/json/save_paths', array( $this, 'filter_save_paths'), 10, 3 );
+						}
+
+
+						continue;
+					}
+				}
+				catch ( \Exception $e ) {
+					$message = $e->getMessage();
+					die( $message );
+				}
+
+
+			}
+		}
+	}
+
+	/**
+	 * Deactivate dev mode.
+	 */
+	protected function dev_mode_deactivate() {
+		$components = $this->get_enabled_components();
+		$settings = $this->get_settings();
+		//die( print_r( $components ) );
+		new Notices('dev_mode_deactivate' );
+		if ( ! empty( $components ) ) {
+			foreach ( $components as $hash => $component ) {
+				$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				$file_path = $path_pattern .  $component['file'];
+				try {
+					$file = file_get_contents($file_path);
+					if ( $file ) {
+						$definition = json_decode($file, TRUE);
+						if ( $key = $definition[0]['key']) {
+
+						}
+						$groups = array();
+						new Notices('test');
+						print '<pre>';
+						die(print_r($definition));
+						print '</pre>';
+						continue;
+					}
+				}
+				catch ( \Exception $e ) {
+					$message = $e->getMessage();
+					die( $message );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Filter save path.
+	 *
+	 * @since 0.0.1
+	 * @param array $paths
+	 *   The ACF JSON save paths.
+	 * @param mixed $post
+	 *   The ACF post.
+	 *
+	 * @return array
+	 *   The altered paths.
+	 */
+	public function filter_save_paths( array $paths, $post ) {
+		$settings = $this->get_settings();
+		$post_name = $post->post_name;
+		$post_type = $post->post_type;
+		if ( $post_type !== 'acf-field-group' ) {
+			return $paths;
+		}
+		if ( isset( $settings['dev_mode'] ) && $settings['dev_mode'] ) {
+			$enabled_components = $this->get_enabled_components();
+			if ( ! empty( $enabled_components ) ) {
+				foreach ( $enabled_components as $hash => $component ) {
+					$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+					$file_path = $path_pattern . $component['file'];
+					$file = file_get_contents($file_path);
+					if ($file) {
+						$definition = json_decode($file, TRUE);
+						if ( isset( $definition[0]['key'] ) && $definition[0]['key'] == $post_name ) {
+							$paths = array( $path_pattern );
+						}
+					}
+				}
+			}
+		}
+		return $paths;
+	}
+
+	/**
+	 * Filter load paths.
+	 *
+	 * @since 0.0.1
+	 * @param array $paths
+	 *   The paths.
+	 *
+	 * @return array
+	 *   The paths.
+	 */
+	public function filter_load_paths( array $paths ) {
+		$settings = $this->get_settings();
+		$enabled_components = $this->get_enabled_components();
+		if ( ! empty( $enabled_components ) ) {
+			foreach ($enabled_components as $hash => $component) {
+				$paths[] = $settings['active_theme_directory'] . "{$component['path']}/assets";
+			}
+		}
+		return $paths;
+	}
+
+	/**
+	 * Filter save file name.
+	 *
+	 * @since 0.0.1
+	 * @param string $filename
+	 *   The ACF file name.
+	 * @param mixed $post
+	 *   The ACF post.
+	 * @param string $load_path
+	 *   The ACF load path.
+	 *
+	 * @return string
+	 *   The altered file name.
+	 */
+	public function filter_save_filename( string $filename, $post, $load_path ) {
+		$settings = $this->get_settings();
+		/*
+		if ( ! isset( $settings['dev_mode'] ) || ! $settings['dev_mode'] ) {
+			return $filename;
+		}
+		/**/
+		$post_name = $post->post_name;
+		$post_type = $post->post_type;
+		if ( $post_type !== 'acf-field-group' ) {
+			return $filename;
+		}
+
+		$enabled_components = $this->get_enabled_components();
+		if ( ! empty( $enabled_components ) ) {
+			foreach ( $enabled_components as $hash => $component ) {
+				$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				$file_path = $path_pattern . $component['file'];
+				$file = file_get_contents( $file_path );
+				if ( $file ) {
+					$definition = json_decode( $file, TRUE );
+					if ( isset( $definition[0]['key'] ) && $definition[0]['key'] == $post_name ) {
+						return $component['file'];
+					}
+				}
+			}
+		}
+		return $filename;
+	}
 
 
 }

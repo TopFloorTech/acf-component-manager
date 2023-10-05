@@ -35,9 +35,14 @@ define( 'ACF_COMPONENT_MANAGER_PATH', trailingslashit( plugin_dir_path( ACF_COMP
 define( 'ACF_COMPONENT_MANAGER_ADMIN_ASSETS', trailingslashit( plugin_dir_url( ACF_COMPONENT_MANAGER_FILE ) ) . 'assets/admin/' );
 
 /**
- * Text domain.
+ * Stored components option name.
  */
-define( 'ACF_COMPONENT_MANAGER_TEXTDOMAIN', 'acf-component-manager' );
+define( 'STORED_COMPONENTS_OPTION_NAME', 'acf_component_manager_components' );
+
+/**
+ * Settings option name.
+ */
+define( 'SETTINGS_OPTION_NAME', 'acf-component-manager-settings' );
 
 require_once 'includes/autoloader.php';
 

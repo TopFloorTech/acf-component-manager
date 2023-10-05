@@ -87,9 +87,11 @@ class AcfComponentManager {
 
 	/**
 	 * Constructs a new Acf_Component_Manager object.
+	 *
+	 * @since 0.0.1
 	 */
 	public function __construct() {
-		if ( defined( 'RATE_CALCULATOR_VERSION' ) ) {
+		if ( defined( 'ACF_COMPONENT_MANAGER_VERSION' ) ) {
 			$this->version = ACF_COMPONENT_MANAGER_VERSION;
 		}
 		else {
@@ -108,7 +110,7 @@ class AcfComponentManager {
 	 * Load Dependencies.
 	 *
 	 * @since 0.0.1
-	 * @access protected
+	 * @access private
 	 */
 	private function load_dependencies() {
 
@@ -144,13 +146,21 @@ class AcfComponentManager {
 
 		$plugin_admin = $this->admin;
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
+
 		$component_manager = $this->componentManager;
 		$this->loader->add_action( 'acf/init', $component_manager, 'load_components' );
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_components', $component_manager, 'render_page', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_components', $component_manager, 'save', 10, 1 );
+		$this->loader->add_filter(  'acf_component_manager_tabs', $component_manager, 'add_menu_tab' );
+		//$this->loader->add_action( 'update_option_' . SETTINGS_OPTION_NAME, $component_manager, 'dev_mode_switch', 10, 3 );
+		$this->loader->add_filter( 'acf/json/save_file_name', $component_manager, 'filter_save_filename', 10, 3 );
+		$this->loader->add_filter( 'acf/json/save_paths', $component_manager, 'filter_save_paths', 10, 2 );
+		$this->loader->add_filter( 'acf/json/load_json', $component_manager, 'filter_load_paths', 10, 1 );
+
 		$settings_manager = $this->settingsManager;
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_settings', $settings_manager, 'render_page', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_settings', $settings_manager, 'save', 10, 1 );
+		$this->loader->add_filter( 'acf_component_manager_tabs', $settings_manager, 'add_menu_tab' );
 	}
 
 	/**

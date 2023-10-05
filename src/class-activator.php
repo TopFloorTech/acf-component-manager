@@ -97,7 +97,7 @@ class Activator {
 		$settings = array(
 			'version' => ACF_COMPONENT_MANAGER_VERSION,
 			'dev_mode' => true,
-			'active_theme_directory' => get_template_directory(),
+			'active_theme_directory' => get_stylesheet_directory(),
 		);
 		update_option( 'acf-component-manager-settings', $settings );
 	}

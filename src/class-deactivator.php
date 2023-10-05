@@ -32,7 +32,8 @@ class Deactivator {
 	 * @access private
 	 */
 	private static function delete_settings() {
-		delete_option( 'acf-componenet-manager-settings' );
+		delete_option( SETTINGS_OPTION_NAME );
+		delete_option( STORED_COMPONENTS_OPTION_NAME );
 	}
 
 }
