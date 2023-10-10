@@ -15,7 +15,7 @@ class SettingsForm extends FormBase {
 	 */
 	public function form( array $settings ) {
 		?>
-		<form method="post" action="<?php print $this->get_form_url(); ?>">
+		<form method="post" action="<?php print $this->get_form_url(); ?>" id="acf-component-manager--settings-form">
 			<?php wp_nonce_field( 'acf_component_manager', 'save' ); ?>
 			<input type="hidden" name="action" value="save">
 			<input type="hidden" name="callback" value="manage_settings">
@@ -39,6 +39,26 @@ class SettingsForm extends FormBase {
 						</label>
 						<p class="helper"><em><?php print __( 'Dev mode prevents the ACF component from automatically loading.', 'acf-component-manager' ); ?></em></p>
 					</td>
+				</tr>
+
+				<tr class="form-field">
+					<th class="row">
+						<label for="import_components">
+							Import enabled components.
+						</label>
+					</th>
+					<td>
+						<input
+							type="checkbox"
+							name="import_components"
+							id="import_components"
+						>
+						<p class="helper"><em></em></p>
+
+					</td>
+				</tr>
+
+
 			</table>
 			<p class="submit">
 				<?php submit_button( __( 'Save setting', 'acf-component-manager' ), 'primary', 'submit' ); ?>

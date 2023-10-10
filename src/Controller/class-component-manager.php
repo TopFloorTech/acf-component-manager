@@ -13,7 +13,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 use AcfComponentManager\Form\ComponentForm;
 use AcfComponentManager\View\ComponentView;
-use AcfComponentManager\Notices;
+use AcfComponentManager\NoticeManager;
 
 class ComponentManager {
 
@@ -26,7 +26,20 @@ class ComponentManager {
 	 */
 	protected $settings;
 
+	/**
+	 * AcfComponentManager\NoticeManager definition.
+	 *
+	 * @var \AcfComponentManager\NoticeManager
+	 */
+	protected $noticeManager;
 
+	/**
+	 * File pattern.
+	 * $settings['active_theme_directory'] . "/{$component['path']}/assets/"
+	 *
+	 * @var string
+	 */
+	protected $file_pattern = '%1$s/%2$s/assets/';
 
 	/**
 	 * Initialize the class and set its properties.
@@ -35,6 +48,13 @@ class ComponentManager {
 	 */
 	public function __construct() {
 		$this->settings = $this->get_settings();
+	}
+
+	/**
+	 * Load dependencies.
+	 */
+	protected function load_dependencies() {
+		$this->noticeManager = new NoticeManager();
 	}
 
 	/**
@@ -140,6 +160,13 @@ class ComponentManager {
 	}
 
 	/**
+	 * Get key from file.
+	 *
+	 * @since 0.0.1
+	 * @param
+	 */
+
+	/**
 	 * Get Settings.
 	 *
 	 * @since 0.0.1
@@ -173,11 +200,12 @@ class ComponentManager {
 			return $components;
 		}
 
-		foreach ( glob( $settings['active_theme_directory'] . "/components/*/functions.php" ) as $functions ) {
-			$component = get_file_data( $functions, array( 'Component' => 'Component' ) );
-			// Get all eligible components.  Components should be in the components theme directory and include the File Header 'Component'.
+		foreach ( glob( $settings['active_theme_directory'] . "/components/*/functions.php" ) as $functions_file ) {
+			$component = get_file_data( $functions_file, array( 'Component' => 'Component' ) );
+			// Get all eligible components.  Components should be in the components
+			// theme directory and include the File Header 'Component'.
 			if ( ! empty( $component['Component'] ) ) {
-				$component_path = str_replace( $settings['active_theme_directory'], '', $functions );
+				$component_path = str_replace( $settings['active_theme_directory'], '', $functions_file );
 				$component_path = str_replace( '/functions.php', '', $component_path );
 
 				$components[] = array(
@@ -209,7 +237,8 @@ class ComponentManager {
 			return $acf_files;
 		}
 
-		$path_pattern = $settings['active_theme_directory'] . "/{$component['path']}/assets/";
+		//$path_pattern = $settings['active_theme_directory'] . "/{$component['path']}/assets/";
+		$path_pattern = sprintf( $this->file_pattern, $component['active_theme_directory'], $component['path'] );
 		foreach ( glob( $path_pattern . "*.json" ) as $files ) {
 			$acf_files[] = str_replace( $path_pattern, '', $files );
 		}
@@ -321,7 +350,8 @@ class ComponentManager {
 					continue;
 				}
 
-				$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				//$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
 				$file_path = $path_pattern . $component['file'];
 
 				try {
@@ -350,8 +380,8 @@ class ComponentManager {
 	 * @param string $option
 	 *   The option name.
 	 */
-	public function dev_mode_switch( $old_value, $value, $option ) {
-
+	public function dev_mode_switch( $old_value, $new_value, $option ) {
+		NoticeManager::add_notice( 'dev_mode_switch' );
 		// If going into dev mode.
 		if (
 			isset( $old_value['dev_mode'] ) &&
@@ -382,21 +412,49 @@ class ComponentManager {
 	 * Activate dev mode.
 	 */
 	protected function dev_mode_activate() {
-		new Notices( 'dev_mode_activate' );
+		NoticeManager::add_notice( 'dev_mode_deactivate' );
 		$components = $this->get_enabled_components();
 		$settings = $this->get_settings();
 		if ( !empty( $components ) ) {
 			foreach ( $components as $hash => $component ) {
-				$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				//$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
 				$file_path = $path_pattern .  $component['file'];
 				try {
 					$file = file_get_contents($file_path);
 					if ( $file ) {
 						$definition = json_decode($file, TRUE);
-						$groups = array();
-						if ( $key = $definition[0]['key']) {
-							//add_filter( 'acf/json/save_paths', array( $this, 'filter_save_paths'), 10, 3 );
+						$field_group = array();
+						if ( isset( $definition[0] ) ) {
+							$field_group = $definition[0];
 						}
+
+						if ( empty( $field_group ) ) {
+							continue;
+						}
+
+						$fields = array();
+						if ( isset( $field_group['fields'] ) ) {
+							$fields = $field_group['fields'];
+							unset( $field_group['fields'] );
+						}
+						$group_post = false;
+						if ( $key = $field_group['key']) {
+							// Query posts with matching key.
+							$group_post = $this->get_post_by_key( 'acf-field-group', $key );
+						}
+
+						$group_properties = $this->map_group_properties_to_post( $field_group );
+
+
+						if ( ! $group_post ) {
+							// Create a new post.
+						}
+
+						else {
+
+						}
+
 
 
 						continue;
@@ -419,23 +477,27 @@ class ComponentManager {
 		$components = $this->get_enabled_components();
 		$settings = $this->get_settings();
 		//die( print_r( $components ) );
-		new Notices('dev_mode_deactivate' );
+		NoticeManager::add_notice('dev_mode_deactivate: ' . wp_get_environment_type() );
 		if ( ! empty( $components ) ) {
 			foreach ( $components as $hash => $component ) {
-				$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				//$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
 				$file_path = $path_pattern .  $component['file'];
+				NoticeManager::add_notice( $file_path );
 				try {
-					$file = file_get_contents($file_path);
+					$file = file_get_contents( $file_path );
 					if ( $file ) {
 						$definition = json_decode($file, TRUE);
+						$group_post = false;
 						if ( $key = $definition[0]['key']) {
+							$group_post = $this->get_post_by_key( 'acf-field-group', $key );
+						}
+
+						if ( $group_post ) {
 
 						}
-						$groups = array();
-						new Notices('test');
-						print '<pre>';
-						die(print_r($definition));
-						print '</pre>';
+						$field_posts = false;
+
 						continue;
 					}
 				}
@@ -445,6 +507,81 @@ class ComponentManager {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get post by key.
+	 *
+	 * @param string $post_type
+	 *   The ACF post type.
+	 * @param string $key
+	 *   The ACF key.
+	 *
+	 * @return mixed
+	 *   The post if found.
+	 */
+	protected function get_post_by_key( string $post_type, string $key ) {
+		$args = array(
+			'post_name' => $key,
+			'post_type' => $post_type,
+		);
+		$posts = get_posts( $args );
+		if ( $posts ) {
+			return reset( $posts );
+		}
+		return false;
+	}
+
+	/**
+	 * Map group properties to post.
+	 *
+	 * @param array $component
+	 *   The component array.
+	 *
+	 * @param array
+	 *   The post array.
+	 */
+	protected function map_group_properties_to_post( array $component ) {
+		$group_properties = array();
+		if ( ! isset( $component['key'] ) ) {
+			return $group_properties;
+		}
+		$group_properties['key'] = $component['key'];
+		unset( $component['key'] );
+
+		if ( ! isset( $component['title'] ) ) {
+			return $group_properties;
+		}
+
+		$group_properties['title'] = $component['title'];
+		$group_properties['post_name'] = sanitize_title( $component['title'] );
+		unset( $component['title'] );
+
+		$group_properties['post_type'] = 'acf-field-group';
+
+		if ( isset( $component['menu_order'] ) ) {
+			$group_properties['menu_order'] = $component['menu_order'];
+			unset( $component['menu_order'] );
+		}
+
+		if ( isset( $component['active'] ) ) {
+			if ( $component['active'] == true ) {
+				$group_properties['post_status'] = 'publish';
+			}
+			else {
+				$group_properties['post_status'] = 'acf-disabled';
+			}
+			unset( $component['active'] );
+		}
+
+		// Fields are mapped to a separate post.
+		if ( isset( $component['fields'] ) ) {
+			unset( $component['fields'] );
+		}
+
+		$group_properties['post_content'] = maybe_serialize( $component );
+
+		return $group_properties;
 	}
 
 	/**
@@ -470,7 +607,7 @@ class ComponentManager {
 			$enabled_components = $this->get_enabled_components();
 			if ( ! empty( $enabled_components ) ) {
 				foreach ( $enabled_components as $hash => $component ) {
-					$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+					$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
 					$file_path = $path_pattern . $component['file'];
 					$file = file_get_contents($file_path);
 					if ($file) {
@@ -500,7 +637,8 @@ class ComponentManager {
 		$enabled_components = $this->get_enabled_components();
 		if ( ! empty( $enabled_components ) ) {
 			foreach ($enabled_components as $hash => $component) {
-				$paths[] = $settings['active_theme_directory'] . "{$component['path']}/assets";
+				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
+				$paths[] = $path_pattern;
 			}
 		}
 		return $paths;
@@ -536,7 +674,7 @@ class ComponentManager {
 		$enabled_components = $this->get_enabled_components();
 		if ( ! empty( $enabled_components ) ) {
 			foreach ( $enabled_components as $hash => $component ) {
-				$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
 				$file_path = $path_pattern . $component['file'];
 				$file = file_get_contents( $file_path );
 				if ( $file ) {

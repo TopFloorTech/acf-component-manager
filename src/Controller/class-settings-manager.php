@@ -109,6 +109,11 @@ class SettingsManager {
 			$dev_mode = $form_data['dev_mode'];
 		}
 		$settings['dev_mode'] = $dev_mode;
+		$import_components = false;
+		if ( isset( $form_data['import_components'] ) ) {
+			$import_components = $form_data['import_components'];
+		}
+		$settings['import_components'] = $import_components;
 
 		update_option( SETTINGS_OPTION_NAME, $settings );
 

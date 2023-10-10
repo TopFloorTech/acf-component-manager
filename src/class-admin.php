@@ -111,6 +111,16 @@ class Admin {
 	}
 
 	/**
+	 * Enqueue scripts.
+	 *
+	 * @since 0.0.1
+	 */
+	public function enqueue_scripts() {
+		wp_register_script( 'acf-component-manager', ACF_COMPONENT_MANAGER_ADMIN_ASSETS . 'js/acf-component-manager.js', array(), ACF_COMPONENT_MANAGER_VERSION, true );
+		wp_enqueue_script( 'acf-component-manager' );
+	}
+
+	/**
 	 * Gets admin hooks.
 	 *
 	 * @since 0.0.1

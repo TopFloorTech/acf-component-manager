@@ -13,6 +13,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 use AcfComponentManager\Controller\ComponentManager;
 use AcfComponentManager\Controller\SettingsManager;
+use AcfComponentManager\NoticeManager;
 
 class AcfComponentManager {
 
@@ -77,6 +78,13 @@ class AcfComponentManager {
 	protected $settingsManager;
 
 	/**
+	 * AcfComponentManager\NoticeManager definition.
+	 *
+	 * @var \AcfComponentManager\NoticeManager
+	 */
+	protected $noticeManager;
+
+	/**
 	 * Options.
 	 *
 	 * @since 0.0.1
@@ -118,7 +126,7 @@ class AcfComponentManager {
 		$this->loader = new Loader();
 		$this->componentManager = new ComponentManager();
 		$this->settingsManager = new SettingsManager();
-
+		$this->noticeManager = new NoticeManager();
 	}
 
 	/**
@@ -145,22 +153,30 @@ class AcfComponentManager {
 	private function define_admin_hooks() {
 
 		$plugin_admin = $this->admin;
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
+		if ( wp_get_environment_type() == 'development' ) {
+			$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
+		}
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		$component_manager = $this->componentManager;
 		$this->loader->add_action( 'acf/init', $component_manager, 'load_components' );
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_components', $component_manager, 'render_page', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_components', $component_manager, 'save', 10, 1 );
 		$this->loader->add_filter(  'acf_component_manager_tabs', $component_manager, 'add_menu_tab' );
-		//$this->loader->add_action( 'update_option_' . SETTINGS_OPTION_NAME, $component_manager, 'dev_mode_switch', 10, 3 );
+		$this->loader->add_action( 'update_option_' . SETTINGS_OPTION_NAME, $component_manager, 'dev_mode_switch', 10, 3 );
 		$this->loader->add_filter( 'acf/json/save_file_name', $component_manager, 'filter_save_filename', 10, 3 );
 		$this->loader->add_filter( 'acf/json/save_paths', $component_manager, 'filter_save_paths', 10, 2 );
-		$this->loader->add_filter( 'acf/json/load_json', $component_manager, 'filter_load_paths', 10, 1 );
+		//$this->loader->add_filter( 'acf/json/load_json', $component_manager, 'filter_load_paths', 10, 1 );
 
 		$settings_manager = $this->settingsManager;
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_settings', $settings_manager, 'render_page', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_settings', $settings_manager, 'save', 10, 1 );
 		$this->loader->add_filter( 'acf_component_manager_tabs', $settings_manager, 'add_menu_tab' );
+
+		$notice_manager = $this->noticeManager;
+		$this->loader->add_action( 'admin_init', $notice_manager, 'dismiss_notice' );
+		$this->loader->add_action( 'admin_notices', $notice_manager, 'show_notices' );
+
 	}
 
 	/**

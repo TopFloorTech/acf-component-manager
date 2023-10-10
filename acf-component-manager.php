@@ -44,6 +44,11 @@ define( 'STORED_COMPONENTS_OPTION_NAME', 'acf_component_manager_components' );
  */
 define( 'SETTINGS_OPTION_NAME', 'acf-component-manager-settings' );
 
+/**
+ * Notices option name.
+ */
+define( 'NOTICES_OPTION_NAME', 'acf-component-manager-notices' );
+
 require_once 'includes/autoloader.php';
 
 /**
