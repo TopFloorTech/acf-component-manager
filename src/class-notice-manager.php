@@ -47,7 +47,7 @@ class NoticeManager {
 						data-dismiss-url="<?php print esc_url( $dismiss_url ); ?>"
 					<?php endif; ?>
 					>
-					<p><?php _e( $notice['message'], 'acf-component-manager' ); ?></p>
+					<p><?php _e( $notice['message'] . ' - ' . $notice['hash'], 'acf-component-manager' ); ?></p>
 				</div>
 				<?php
 				$output = ob_get_clean();
@@ -90,8 +90,8 @@ class NoticeManager {
 		// Create a hash so we can reduce duplicates.
 		$hash = wp_hash( json_encode( $new_notice ) );
 
-		if ( ! array_search( $hash, array_column( $notices, 'hash' ), true ) ) {
-		  $new_notice['hash'] = $hash;
+		if ( array_search( $hash, array_column( $notices, 'hash' ), true ) === false ) {
+			$new_notice['hash'] = $hash;
 			$id = uniqid();
 			$notices[$id] = $new_notice;
 			update_option( NOTICES_OPTION_NAME, $notices );
@@ -122,5 +122,14 @@ class NoticeManager {
 	 */
 	public function get_notices() : array {
 		return get_option( NOTICES_OPTION_NAME, array() );
+	}
+
+	/**
+	 * Delete all notices.
+	 *
+	 * @since 0.0.1
+	 */
+	public function delete_all_notices() {
+		update_option( NOTICES_OPTION_NAME, array() );
 	}
 }

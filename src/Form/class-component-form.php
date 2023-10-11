@@ -26,7 +26,7 @@ class ComponentForm extends FormBase {
 			<input type="hidden" name="callback" value="manage_components">
 			<div class="instructions">
 				<p>ACF Component Manager helps manage ACF components, allowing you to select from existing versions of a component.</p>
-				<p class="instructions">To manage components with Component Manager, export the ACF component and place the JSON file in your theme\'s <code>/components/{component_name}/assets</code> directory.</p>
+				<p class="instructions">To manage components with Component Manager, export the ACF component and place the JSON file in your theme's <code>/components/{component_name}/assets</code> directory.</p>
 			</div>
 
 			<?php if ( ! empty( $components ) ) : ?>

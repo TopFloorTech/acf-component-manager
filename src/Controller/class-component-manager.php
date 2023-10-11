@@ -237,8 +237,7 @@ class ComponentManager {
 			return $acf_files;
 		}
 
-		//$path_pattern = $settings['active_theme_directory'] . "/{$component['path']}/assets/";
-		$path_pattern = sprintf( $this->file_pattern, $component['active_theme_directory'], $component['path'] );
+		$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
 		foreach ( glob( $path_pattern . "*.json" ) as $files ) {
 			$acf_files[] = str_replace( $path_pattern, '', $files );
 		}
@@ -350,7 +349,7 @@ class ComponentManager {
 					continue;
 				}
 
-				//$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
+
 				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
 				$file_path = $path_pattern . $component['file'];
 
@@ -362,7 +361,7 @@ class ComponentManager {
 					}
 				}
 				catch ( \Exception $e ) {
-					print $e->getMessage();
+					NoticeManager::add_notice( $e->getMessage() );
 				}
 			}
 		}
@@ -597,9 +596,15 @@ class ComponentManager {
 	 *   The altered paths.
 	 */
 	public function filter_save_paths( array $paths, $post ) {
+		NoticeManager::add_notice('filter_save_paths');
 		$settings = $this->get_settings();
-		$post_name = $post->post_name;
-		$post_type = $post->post_type;
+
+		$acf_post = get_post( $post['ID'] );
+		if ( ! $acf_post ) {
+			return $paths;
+		}
+		$post_name = $acf_post->post_name;
+		$post_type = $acf_post->post_type;
 		if ( $post_type !== 'acf-field-group' ) {
 			return $paths;
 		}
@@ -633,6 +638,8 @@ class ComponentManager {
 	 *   The paths.
 	 */
 	public function filter_load_paths( array $paths ) {
+		//NoticeManager::add_notice('filter_load_paths');
+		//NoticeManager::add_notice( '$paths: <pre>' . print_r($paths, true) . '</pre>' );
 		$settings = $this->get_settings();
 		$enabled_components = $this->get_enabled_components();
 		if ( ! empty( $enabled_components ) ) {
@@ -641,6 +648,7 @@ class ComponentManager {
 				$paths[] = $path_pattern;
 			}
 		}
+		NoticeManager::add_notice('$paths after: <pre>' . print_r( $paths, true ) . '</pre>' );
 		return $paths;
 	}
 
@@ -659,14 +667,19 @@ class ComponentManager {
 	 *   The altered file name.
 	 */
 	public function filter_save_filename( string $filename, $post, $load_path ) {
+		NoticeManager::add_notice('filter_save_filename: ' . $filename . '; $load_path: ' . $load_path );
 		$settings = $this->get_settings();
 		/*
 		if ( ! isset( $settings['dev_mode'] ) || ! $settings['dev_mode'] ) {
 			return $filename;
 		}
 		/**/
-		$post_name = $post->post_name;
-		$post_type = $post->post_type;
+		$acf_post = get_post( $post['ID'] );
+		if ( ! $acf_post ) {
+			return $filename;
+		}
+		$post_name = $acf_post->post_name;
+		$post_type = $acf_post->post_type;
 		if ( $post_type !== 'acf-field-group' ) {
 			return $filename;
 		}
@@ -679,7 +692,7 @@ class ComponentManager {
 				$file = file_get_contents( $file_path );
 				if ( $file ) {
 					$definition = json_decode( $file, TRUE );
-					if ( isset( $definition[0]['key'] ) && $definition[0]['key'] == $post_name ) {
+					if ( isset( $definition['key'] ) && $definition['key'] == $post_name ) {
 						return $component['file'];
 					}
 				}
