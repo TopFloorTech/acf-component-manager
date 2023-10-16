@@ -136,20 +136,15 @@ class ComponentManager {
 		if ( ! empty( $theme_components ) ) {
 			foreach ($theme_components as $component_properties) {
 				$hash = $component_properties['hash'];
+				if ( ! isset( $form_data['file'][$hash] ) || ! isset( $form_data['key'][$hash] ) ) {
+					continue;
+				}
 				$save_components[$hash] = $component_properties;
-
-				if ( isset( $form_data['file'][$hash] ) ) {
-					$save_components[$hash]['file'] = $form_data['file'][$hash];
-				}
-				else {
-					$save_components[$hash]['file'] = '';
-				}
+				$save_components[$hash]['file'] = $form_data['file'][$hash];
+				$save_components[$hash]['key'] = $form_data['key'][$hash];
 
 				if ( isset( $form_data['enabled'][$hash] ) ) {
 					$save_components[$hash]['enabled'] = $form_data['enabled'][$hash];
-					if ( $save_components[$hash]['file'] == '' ) {
-						$save_components[$hash]['enabled'] = false;
-					}
 				}
 				else {
 					$save_components[$hash]['enabled'] = false;
@@ -158,13 +153,6 @@ class ComponentManager {
 			$this->set_stored_components( $save_components );
 		}
 	}
-
-	/**
-	 * Get key from file.
-	 *
-	 * @since 0.0.1
-	 * @param
-	 */
 
 	/**
 	 * Get Settings.
@@ -205,7 +193,7 @@ class ComponentManager {
 			// Get all eligible components.  Components should be in the components
 			// theme directory and include the File Header 'Component'.
 			if ( ! empty( $component['Component'] ) ) {
-				$component_path = str_replace( $settings['active_theme_directory'], '', $functions_file );
+				$component_path = str_replace( $settings['active_theme_directory'] . '/', '', $functions_file );
 				$component_path = str_replace( '/functions.php', '', $component_path );
 
 				$components[] = array(
@@ -237,11 +225,30 @@ class ComponentManager {
 			return $acf_files;
 		}
 
-		$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
-		foreach ( glob( $path_pattern . "*.json" ) as $files ) {
-			$acf_files[] = str_replace( $path_pattern, '', $files );
-		}
+		$path_pattern = $this->get_component_path( $component['path'] );
 
+		foreach ( glob( $path_pattern . "*.json" ) as $files ) {
+
+			$loaded_file = file_get_contents( $files );
+			if ( $loaded_file ) {
+
+				$json = json_decode( $loaded_file, true );
+				// Synced theme components have a different structure.
+				if ( ! $key = $this->get_key_from_json( $json ) ) {
+					$key = $this->get_key_from_json( reset( $json ) );
+				}
+
+				if ( $key ) {
+					$file_name = str_replace( $path_pattern, '', $files );
+					$acf_files[] = array(
+						'file_name' => $file_name,
+						'path' => $component['path'],
+						'key' => $key,
+					);
+				}
+
+			}
+		}
 		return $acf_files;
 
 	}
@@ -350,7 +357,7 @@ class ComponentManager {
 				}
 
 
-				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
+				$path_pattern = $this->get_component_path( $component['path'] );
 				$file_path = $path_pattern . $component['file'];
 
 				try {
@@ -366,147 +373,6 @@ class ComponentManager {
 			}
 		}
  	}
-
-	/**
-	 * Dev mode switch.
-	 *
-	 * @since 0.0.1
-	 *
-	 * @param mixed $old_value
-	 *   The original value.
-	 * @param mixed $new_value
-	 *   The new value.
-	 * @param string $option
-	 *   The option name.
-	 */
-	public function dev_mode_switch( $old_value, $new_value, $option ) {
-		NoticeManager::add_notice( 'dev_mode_switch' );
-		// If going into dev mode.
-		if (
-			isset( $old_value['dev_mode'] ) &&
-			! $old_value['dev_mode'] &&
-			isset( $new_value['dev_mode'] ) &&
-			$new_value['dev_mode']
-		) {
-			$this->dev_mode_activate();
-		}
-		// If going out of dev mode.
-		if (
-			isset( $old_value['dev_mode'] ) &&
-			$old_value['dev_mode'] &&
-			(
-				(
-					isset( $new_value['dev_mode'] ) &&
-					! $new_value['dev_mode']
-				)
-				||
-				! isset( $new_value['dev_mode'] )
-			)
-		) {
-			$this->dev_mode_deactivate();
-		}
-	}
-
-	/**
-	 * Activate dev mode.
-	 */
-	protected function dev_mode_activate() {
-		NoticeManager::add_notice( 'dev_mode_deactivate' );
-		$components = $this->get_enabled_components();
-		$settings = $this->get_settings();
-		if ( !empty( $components ) ) {
-			foreach ( $components as $hash => $component ) {
-				//$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
-				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
-				$file_path = $path_pattern .  $component['file'];
-				try {
-					$file = file_get_contents($file_path);
-					if ( $file ) {
-						$definition = json_decode($file, TRUE);
-						$field_group = array();
-						if ( isset( $definition[0] ) ) {
-							$field_group = $definition[0];
-						}
-
-						if ( empty( $field_group ) ) {
-							continue;
-						}
-
-						$fields = array();
-						if ( isset( $field_group['fields'] ) ) {
-							$fields = $field_group['fields'];
-							unset( $field_group['fields'] );
-						}
-						$group_post = false;
-						if ( $key = $field_group['key']) {
-							// Query posts with matching key.
-							$group_post = $this->get_post_by_key( 'acf-field-group', $key );
-						}
-
-						$group_properties = $this->map_group_properties_to_post( $field_group );
-
-
-						if ( ! $group_post ) {
-							// Create a new post.
-						}
-
-						else {
-
-						}
-
-
-
-						continue;
-					}
-				}
-				catch ( \Exception $e ) {
-					$message = $e->getMessage();
-					die( $message );
-				}
-
-
-			}
-		}
-	}
-
-	/**
-	 * Deactivate dev mode.
-	 */
-	protected function dev_mode_deactivate() {
-		$components = $this->get_enabled_components();
-		$settings = $this->get_settings();
-		//die( print_r( $components ) );
-		NoticeManager::add_notice('dev_mode_deactivate: ' . wp_get_environment_type() );
-		if ( ! empty( $components ) ) {
-			foreach ( $components as $hash => $component ) {
-				//$path_pattern = $settings['active_theme_directory'] . "{$component['path']}/assets/";
-				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
-				$file_path = $path_pattern .  $component['file'];
-				NoticeManager::add_notice( $file_path );
-				try {
-					$file = file_get_contents( $file_path );
-					if ( $file ) {
-						$definition = json_decode($file, TRUE);
-						$group_post = false;
-						if ( $key = $definition[0]['key']) {
-							$group_post = $this->get_post_by_key( 'acf-field-group', $key );
-						}
-
-						if ( $group_post ) {
-
-						}
-						$field_posts = false;
-
-						continue;
-					}
-				}
-				catch ( \Exception $e ) {
-					$message = $e->getMessage();
-					die( $message );
-				}
-			}
-		}
-	}
 
 	/**
 	 * Get post by key.
@@ -527,6 +393,22 @@ class ComponentManager {
 		$posts = get_posts( $args );
 		if ( $posts ) {
 			return reset( $posts );
+		}
+		return false;
+	}
+
+	/**
+	 * Get key from JSON.
+	 *
+	 * @param array $json
+	 *   The JSON array.
+	 *
+	 * @return string|false
+	 *   The key.
+	 */
+	protected function get_key_from_json( array $json ) {
+		if ( isset( $json['key'] ) ) {
+			return $json['key'];
 		}
 		return false;
 	}
@@ -594,9 +476,10 @@ class ComponentManager {
 	 *
 	 * @return array
 	 *   The altered paths.
+	 *
+	 * @see acf/json/save_paths
 	 */
 	public function filter_save_paths( array $paths, $post ) {
-		NoticeManager::add_notice('filter_save_paths');
 		$settings = $this->get_settings();
 
 		$acf_post = get_post( $post['ID'] );
@@ -612,12 +495,17 @@ class ComponentManager {
 			$enabled_components = $this->get_enabled_components();
 			if ( ! empty( $enabled_components ) ) {
 				foreach ( $enabled_components as $hash => $component ) {
-					$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
+					$path_pattern = $this->get_component_path( $component['path'] );
 					$file_path = $path_pattern . $component['file'];
-					$file = file_get_contents($file_path);
-					if ($file) {
-						$definition = json_decode($file, TRUE);
-						if ( isset( $definition[0]['key'] ) && $definition[0]['key'] == $post_name ) {
+					$file = file_get_contents( $file_path );
+					if ( $file ) {
+						$definition = json_decode( $file, true );
+
+						// Synced theme components have a different structure.
+						if ( ! $key = $this->get_key_from_json( $definition ) ) {
+							$key = $this->get_key_from_json( reset( $definition ) );
+						}
+						if ( $key && $key == $post_name ) {
 							$paths = array( $path_pattern );
 						}
 					}
@@ -636,19 +524,18 @@ class ComponentManager {
 	 *
 	 * @return array
 	 *   The paths.
+	 *
+	 * @see: acf/settings/load_json
 	 */
 	public function filter_load_paths( array $paths ) {
-		//NoticeManager::add_notice('filter_load_paths');
-		//NoticeManager::add_notice( '$paths: <pre>' . print_r($paths, true) . '</pre>' );
-		$settings = $this->get_settings();
+
 		$enabled_components = $this->get_enabled_components();
 		if ( ! empty( $enabled_components ) ) {
-			foreach ($enabled_components as $hash => $component) {
-				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
+			foreach ($enabled_components as $component) {
+				$path_pattern = $this->get_component_path( $component['path'] );
 				$paths[] = $path_pattern;
 			}
 		}
-		NoticeManager::add_notice('$paths after: <pre>' . print_r( $paths, true ) . '</pre>' );
 		return $paths;
 	}
 
@@ -665,15 +552,12 @@ class ComponentManager {
 	 *
 	 * @return string
 	 *   The altered file name.
+	 *
+	 * @see acf/json/save_file
 	 */
 	public function filter_save_filename( string $filename, $post, $load_path ) {
-		NoticeManager::add_notice('filter_save_filename: ' . $filename . '; $load_path: ' . $load_path );
 		$settings = $this->get_settings();
-		/*
-		if ( ! isset( $settings['dev_mode'] ) || ! $settings['dev_mode'] ) {
-			return $filename;
-		}
-		/**/
+
 		$acf_post = get_post( $post['ID'] );
 		if ( ! $acf_post ) {
 			return $filename;
@@ -687,19 +571,44 @@ class ComponentManager {
 		$enabled_components = $this->get_enabled_components();
 		if ( ! empty( $enabled_components ) ) {
 			foreach ( $enabled_components as $hash => $component ) {
-				$path_pattern = sprintf( $this->file_pattern, $settings['active_theme_directory'], $component['path'] );
+				$path_pattern = $this->get_component_path( $component['path'] );
 				$file_path = $path_pattern . $component['file'];
 				$file = file_get_contents( $file_path );
+
 				if ( $file ) {
 					$definition = json_decode( $file, TRUE );
-					if ( isset( $definition['key'] ) && $definition['key'] == $post_name ) {
-						return $component['file'];
+
+					// Synced theme components have a different structure.
+					if ( ! $key = $this->get_key_from_json( $definition ) ) {
+						$key = $this->get_key_from_json( reset( $definition ) );
 					}
+					if ( $key && $key == $post_name ) {
+						$filename = $component['file'];
+					}
+
 				}
 			}
 		}
 		return $filename;
 	}
 
+	/**
+	 * Get component path.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param string $component_path
+	 *   The path to the component.
+	 *
+	 * @return string|false
+	 *   The full path to the component.
+	 */
+	protected function get_component_path( string $component_path ) {
+		$settings = $this->get_settings();
+		if ( isset( $settings['active_theme_directory'] ) ) {
+			return sprintf( $this->file_pattern, $settings['active_theme_directory'], $component_path );
+		}
+		return false;
+	}
 
 }

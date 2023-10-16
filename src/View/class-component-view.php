@@ -34,7 +34,7 @@ class ComponentView extends ViewBase {
 		}
 
 		if ( ! empty( $stored_components ) ) {
-			print '<h3>' . __( 'Components currently managed', 'acf-component-manager' ) . '</h3>';
+			print '<h3>' . __( 'Managed theme components', 'acf-component-manager' ) . '</h3>';
 
 			foreach( $stored_components as $component ) {
 				print '<h4>' . $component['name'] . '</h4>';
@@ -52,9 +52,10 @@ class ComponentView extends ViewBase {
 		}
 
 		if ( ! empty( $new_components ) ) {
-			print '<h3>' . __( 'New theme components', 'acf-component-manager' ) . '</h3>';
+			print '<h3>' . __( 'Unmanaged theme components', 'acf-component-manager' ) . '</h3>';
 			foreach( $new_components as $component ) {
 				print '<h4>' . $component['name'] . '</h4>';
+
 				print '<hr>';
 			}
 		}

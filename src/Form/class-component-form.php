@@ -25,8 +25,9 @@ class ComponentForm extends FormBase {
 			<input type="hidden" name="action" value="save">
 			<input type="hidden" name="callback" value="manage_components">
 			<div class="instructions">
-				<p>ACF Component Manager helps manage ACF components, allowing you to select from existing versions of a component.</p>
+				<p>ACF Component Manager helps manage ACF components.</p>
 				<p class="instructions">To manage components with Component Manager, export the ACF component and place the JSON file in your theme's <code>/components/{component_name}/assets</code> directory.</p>
+				<p class="warning">There can only be one ACF JSON export per directory, and the 'key' must be unique.</p>
 			</div>
 
 			<?php if ( ! empty( $components ) ) : ?>
@@ -42,35 +43,12 @@ class ComponentForm extends FormBase {
 						if ( isset( $component_properties['files'] ) ) {
 							if ( count( $component_properties['files'] ) > 1 ) {
 								?>
-								<td>
-									<select
-										name="file[<?php print $component_properties['hash']; ?>]"
-										id="<?php print $component_properties['hash']; ?>-file"
-										>
-										<option value="">-- Select --</option>
-										<?php foreach ( $component_properties['files'] as $file ) : ?>
-											<option
-												value="<?php print $file; ?>"
-												<?php if ( isset( $component_properties['stored']['file'] ) && $component_properties['stored']['file'] == $file ) : ?>
-													selected
-												<?php endif; ?>
-											>
-												<?php print $file; ?>
-											</option>
-										<?php endforeach; ?>
-									</select>
-								</td>
-								<td>
-									<input
-										type="checkbox"
-										name="enabled[<?php print $component_properties['hash']; ?>]"
-										id="<?php print $component_properties['hash']; ?>-enabled"
-										value="1"
-										<?php isset( $component_properties['stored']['enabled'] ) ? checked( $component_properties['stored']['enabled'], 1 ) : print ''; ?>
-									>
-									<label for="<?php print $component_properties['hash']; ?>-enabled">
-										<?php _e( 'Enabled', 'acf-component-manager' ); ?>
-									</label>
+								<td colspan="3">
+									<?php
+									_e( "There can be only one ACF JSON file per component,", 'topfloor-parcel' );
+									print count( $component_properties['files'] );
+									_e( ' files found.', 'topfloor-parcel' );
+									?>
 								</td>
 								<?php
 							}
@@ -80,9 +58,16 @@ class ComponentForm extends FormBase {
 								<input
 									type="hidden"
 									name="file[<?php print $component_properties['hash']; ?>]"
-									value="<?php print reset( $component_properties['files'] ); ?>">
-
-								<?php print reset( $component_properties['files'] ); ?>
+									value="<?php print $component_properties['files'][0]['file_name']; ?>">
+								<?php print $component_properties['files'][0]['file_name']; ?>
+								</td>
+								<td>
+									<input
+										type="hidden"
+										name="key[<?php print $component_properties['hash']; ?>]"
+										value="<?php print $component_properties['files'][0]['key']; ?>"
+									>
+									<?php print $component_properties['files'][0]['key']; ?>
 								</td>
 								<td>
 									<input
@@ -101,7 +86,7 @@ class ComponentForm extends FormBase {
 							}
 							else {
 								?>
-								<td>
+								<td colspan="3">
 								<?php print __( 'No files found.  Export the ACF component and place in your theme\'s /components/{component_name}/assets directory to manage.', 'acf-component-manager' ); ?>
 								</td>
 
@@ -110,7 +95,7 @@ class ComponentForm extends FormBase {
 						}
 						else {
 							?>
-							<td>
+							<td colspan="3">
 								<?php print __( 'No files found.  Export the ACF component and place in your theme\'s /components/{component_name}/assets directory to manage.', 'acf-component-manager' ); ?>
 							</td>
 							<td></td>
