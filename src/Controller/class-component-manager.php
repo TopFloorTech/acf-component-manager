@@ -35,11 +35,11 @@ class ComponentManager {
 
 	/**
 	 * File pattern.
-	 * $settings['active_theme_directory'] . "/{$component['path']}/assets/"
+	 * "$settings['active_theme_directory']}/{$settings['components_directory']}{$component['path']}/{$settings['file_directory']}/"
 	 *
 	 * @var string
 	 */
-	protected $file_pattern = '%1$s/%2$s/assets/';
+	protected $file_pattern = '%1$s/%2$s/%3$s/%4$s/';
 
 	/**
 	 * Initialize the class and set its properties.
@@ -74,17 +74,18 @@ class ComponentManager {
 			case 'view':
 				$view = new ComponentView( $form_url );
 				$theme_components = $this->get_theme_components();
+				$stored_components = $this->get_stored_components();
 				$mew_components = array();
 				if ( ! empty( $theme_components ) ) {
-					foreach( $theme_components as $theme_component ) {
-						$stored_component = $this->get_stored_component( $theme_component['hash']);
-						if ( empty( $stored_component ) ) {
-							$mew_components[] = $theme_component;
-						}
 
-					}
+					// filters for performance.
+					$mew_components = array_filter( $theme_components, function( $theme_component ) use ( $stored_components ) {
+						return !in_array( $theme_component['hash'], array_column( $stored_components, 'hash' ) );
+					});
 				}
-				$view->view( $this->get_stored_components(), $mew_components );
+				$missing_components = $this->get_missing_components( $this->get_stored_components() );
+
+				$view->view( $stored_components, $mew_components, $missing_components );
 				break;
 
 			case 'edit':
@@ -106,6 +107,15 @@ class ComponentManager {
 				break;
 		}
 
+	}
+
+	/**
+	 * Dashboard.
+	 */
+	public function dashboard() {
+		$enabled_components = $this->get_enabled_components();
+		$view = new ComponentView( '' );
+		$view->dashboard( $enabled_components );
 	}
 
 	/**
@@ -172,6 +182,30 @@ class ComponentManager {
 	}
 
 	/**
+	 * Get missing components.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param array $managed_components
+	 *   The components currently managed.
+	 *
+	 * @return array
+	 *   Array of components that only exist in the database.
+	 */
+	public function get_missing_components( array $managed_components ) {
+
+		$database_components = $this->get_acf_field_groups();
+		if ( empty( $managed_components ) ) {
+			return $database_components;
+		}
+
+		return array_filter($database_components, function($item) use ($managed_components) {
+			return !in_array($item['key'], array_column($managed_components, 'key'));
+		});
+
+	}
+
+	/**
 	 * Get theme components.
 	 *
 	 * @since 0.0.1
@@ -188,12 +222,18 @@ class ComponentManager {
 			return $components;
 		}
 
-		foreach ( glob( $settings['active_theme_directory'] . "/components/*/functions.php" ) as $functions_file ) {
+		$path_parts = array(
+			$settings['active_theme_directory'],
+			$settings['components_directory'],
+		);
+		$path_parts = implode( '/', $path_parts );
+
+		foreach ( glob( "{$path_parts}/*/functions.php" ) as $functions_file ) {
 			$component = get_file_data( $functions_file, array( 'Component' => 'Component' ) );
 			// Get all eligible components.  Components should be in the components
 			// theme directory and include the File Header 'Component'.
 			if ( ! empty( $component['Component'] ) ) {
-				$component_path = str_replace( $settings['active_theme_directory'] . '/', '', $functions_file );
+				$component_path = str_replace( $path_parts . '/', '', $functions_file );
 				$component_path = str_replace( '/functions.php', '', $component_path );
 
 				$components[] = array(
@@ -227,7 +267,7 @@ class ComponentManager {
 
 		$path_pattern = $this->get_component_path( $component['path'] );
 
-		foreach ( glob( $path_pattern . "*.json" ) as $files ) {
+		foreach ( glob( "{$path_pattern}*.json" ) as $files ) {
 
 			$loaded_file = file_get_contents( $files );
 			if ( $loaded_file ) {
@@ -329,6 +369,35 @@ class ComponentManager {
 	}
 
 	/**
+	 * Get ACF field groups.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @return array
+	 *   An array of ACF field groups.
+	 */
+	public function get_acf_field_groups() {
+		$acf_field_groups = array();
+		$args = array(
+			'post_type' => 'acf-field-group',
+			'posts_per_page' => -1,
+		);
+		$field_group_query = new \WP_Query( $args );
+		if ( $field_group_query->have_posts() ) {
+			$field_group_posts = $field_group_query->get_posts();
+			foreach ( $field_group_posts as $field_group_post ) {
+				$acf_field_groups[] = array(
+					'id' => $field_group_post->ID,
+					'key' => $field_group_post->post_name,
+					'status' => $field_group_post->post_status,
+					'name' => $field_group_post->post_title,
+				);
+			}
+		}
+		return $acf_field_groups;
+	}
+
+	/**
 	 * Load components.
 	 *
 	 * @since 0.0.1
@@ -355,7 +424,6 @@ class ComponentManager {
 				if ( ! isset( $component['file'] ) ) {
 					continue;
 				}
-
 
 				$path_pattern = $this->get_component_path( $component['path'] );
 				$file_path = $path_pattern . $component['file'];
@@ -606,7 +674,7 @@ class ComponentManager {
 	protected function get_component_path( string $component_path ) {
 		$settings = $this->get_settings();
 		if ( isset( $settings['active_theme_directory'] ) ) {
-			return sprintf( $this->file_pattern, $settings['active_theme_directory'], $component_path );
+			return sprintf( $this->file_pattern, $settings['active_theme_directory'], $settings['components_directory'], $component_path, $settings['file_directory'] );
 		}
 		return false;
 	}

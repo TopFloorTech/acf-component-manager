@@ -13,6 +13,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 use AcfComponentManager\Controller\ComponentManager;
 use AcfComponentManager\Controller\SettingsManager;
+use AcfComponentManager\Controller\DashboardManager;
 use AcfComponentManager\NoticeManager;
 
 class AcfComponentManager {
@@ -85,6 +86,13 @@ class AcfComponentManager {
 	protected $noticeManager;
 
 	/**
+	 * AcfComponentManager\Controller\DashboardManager definition.
+	 *
+	 * @var \AcfComponentManager\Controller\DashboardManager
+	 */
+	protected $dashboardManager;
+
+	/**
 	 * Options.
 	 *
 	 * @since 0.0.1
@@ -126,6 +134,7 @@ class AcfComponentManager {
 		$this->loader = new Loader();
 		$this->componentManager = new ComponentManager();
 		$this->settingsManager = new SettingsManager();
+		$this->dashboardManager = new DashboardManager();
 		$this->noticeManager = new NoticeManager();
 	}
 
@@ -160,20 +169,26 @@ class AcfComponentManager {
 
 		$component_manager = $this->componentManager;
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_components', $component_manager, 'render_page', 10, 2 );
+		$this->loader->add_action( 'acf_component_manager_dashboard', $component_manager, 'dashboard', 10 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_components', $component_manager, 'save', 10, 1 );
-		$this->loader->add_filter(  'acf_component_manager_tabs', $component_manager, 'add_menu_tab' );
+		$this->loader->add_filter(  'acf_component_manager_tabs', $component_manager, 'add_menu_tab', 15 );
 		$this->loader->add_filter( 'acf/json/save_file_name', $component_manager, 'filter_save_filename', 10, 3 );
 		$this->loader->add_filter( 'acf/json/save_paths', $component_manager, 'filter_save_paths', 10, 2 );
 		$this->loader->add_filter( 'acf/settings/load_json', $component_manager, 'filter_load_paths', 10, 1 );
 
+		$dashboard_manager = $this->dashboardManager;
+		$this->loader->add_filter( 'acf_component_manager_render_page_dashboard', $dashboard_manager, 'render_page' );
+		$this->loader->add_filter(  'acf_component_manager_tabs', $dashboard_manager, 'add_menu_tab', 5 );
 		$settings_manager = $this->settingsManager;
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_settings', $settings_manager, 'render_page', 10, 2 );
+		$this->loader->add_action( 'acf_component_manager_dashboard', $settings_manager, 'dashboard', 5 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_settings', $settings_manager, 'save', 10, 1 );
-		$this->loader->add_filter( 'acf_component_manager_tabs', $settings_manager, 'add_menu_tab' );
+		$this->loader->add_filter( 'acf_component_manager_tabs', $settings_manager, 'add_menu_tab', 10 );
 
 		$notice_manager = $this->noticeManager;
 		$this->loader->add_action( 'admin_init', $notice_manager, 'dismiss_notice' );
 		$this->loader->add_action( 'admin_notices', $notice_manager, 'show_notices' );
+
 
 	}
 

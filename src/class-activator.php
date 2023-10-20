@@ -98,6 +98,8 @@ class Activator {
 			'version' => ACF_COMPONENT_MANAGER_VERSION,
 			'dev_mode' => true,
 			'active_theme_directory' => get_stylesheet_directory(),
+			'components_directory' => 'components',
+			'file_directory' => 'assets',
 		);
 		update_option( 'acf-component-manager-settings', $settings );
 	}

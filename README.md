@@ -28,10 +28,10 @@ Primarily, it is complex to organize the JSON files into separate directories.  
 
 The component manager expects a specific theme layout for discovering and loading ACF components.
 
-theme-name/
- - components/
-   - ComponentName/
-     - assets/
+theme-name
+ - /components
+   - /ComponentName
+     - /assets
        - xxx.json
      - functions.php
 
@@ -65,29 +65,3 @@ If you need to make changes to your component:
 2. Visit ACF -> Field Groups -> Sync Available.
 3. Select the component, choose "Sync changes" from the Bulk actions, and Apply.
 Change will be automatically synced to the JSON file in the theme.
-
-In the WordPress dashboard, visit Settings > ACF Component Manager.
-
-On the "Manage components" tab to review components that are currently managed and newly discovered components.  
-
-Click the "Edit components" button.
-
-On the Edit form, select the components to Enable.  Enabled components will be loaded via ACF Component Manager.
-
-**NOTE:** Components must be saved at least once for ACF Component Manager to manage them.  If you change themes, you'll need to edit the components.
-
-The Edit form will display the discovered ACF JSON files.  If more than one file is discovered in the `/assets` directory, you can choose which file will be loaded.
-
-This is an important feature, it allows for versioning the components, changing which component is loaded on the fly.
-
-Example:
-Let's say you have a component already in production, and you need to make some changes.
-1. Uncheck Enabled.
-2. Import the JSON file.
-3. Make the changes.
-4. Export the JSON file.
-5. Place the JSON file in the component assets directory.
-6. Commit, deploy to QA.
-7. On QA, Edit components, select the new version.
-
-

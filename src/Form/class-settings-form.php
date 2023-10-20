@@ -43,18 +43,37 @@ class SettingsForm extends FormBase {
 
 				<tr class="form-field">
 					<th class="row">
-						<label for="import_components">
-							Import enabled components.
+						<label form="components_directory">
+							<?php print __( 'Components directory', 'acf-component-manager' ); ?>
 						</label>
 					</th>
 					<td>
 						<input
-							type="checkbox"
-							name="import_components"
-							id="import_components"
-						>
-						<p class="helper"><em></em></p>
+							type="text"
+							name="components_directory"
+							id="components_directory"
+							placeholder="components"
+							value="<?php print $settings['components_directory'] ?? ''; ?>"
+							>
+						<p class="helper"><?php print __( 'Directory containing components in the active theme.  Should not contain leading or trailing slashes \'/\'.', 'acf-component-manager' ); ?></p>
+					</td>
+				</tr>
 
+				<tr class="form-field">
+					<th class="row">
+						<label for="file_directory">
+							<?php print __( 'Component ACF file directory', 'acf-component-manager' ); ?>
+						</label>
+					</th>
+					<td>
+						<input
+							type="text"
+							name="file_directory"
+							id="file_directory"
+							placeholder="assets"
+							value="<?php print $settings['file_directory'] ?? ''; ?>"
+							>
+						<p class="helper"><?php print __( 'Directory containing the ACF JSON file, relative to the component. Should not contain leading or trailing slashes \'/\'.', 'acf-component-manager' ); ?></p>
 					</td>
 				</tr>
 

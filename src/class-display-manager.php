@@ -73,20 +73,7 @@ class DisplayManager {
 		<div class="wrap">
 			<h1><?php print __( 'ACF Component Manager', 'acf-component-manager' ); ?></h1>
 			<?php $this->render_tabs( $current_tab ); ?>
-			<?php
-
-			switch ( $current_tab ) {
-				case 'dashboard':
-					?>
-					<h2> <?php print __( 'Dashboard', 'acf-component-manager' ); ?></h2>
-					<?php
-
-					break;
-				default:
-					do_action( "acf_component_manager_render_page_{$current_tab}", $current_action, $form_url );
-					break;
-			}
-			?>
+			<?php do_action( "acf_component_manager_render_page_{$current_tab}", $current_action, $form_url ); ?>
 		</div>
 		<?php
 		$content = ob_get_clean();
@@ -100,10 +87,7 @@ class DisplayManager {
 	 * @param string $current_tab The current tab.
 	 */
 	public function render_tabs( $current_tab ) {
-		$tabs = [
-			'dashboard' => __( 'Dashboard', 'acf-component-manager' ),
-			//'import' => __( 'Import', 'acf-component-manager' ),
-		];
+		$tabs = array();
 
 		$tabs = apply_filters( 'acf_component_manager_tabs', $tabs );
 		// @todo: Add menu icon.
