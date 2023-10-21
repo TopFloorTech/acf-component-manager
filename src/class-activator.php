@@ -94,9 +94,13 @@ class Activator {
 	 * @return bool
 	 */
 	static private function set_up() {
+		$dev_mode = false;
+		if ( wp_get_environment_type() == 'development' ) {
+			$dev_mode = true;
+		}
 		$settings = array(
 			'version' => ACF_COMPONENT_MANAGER_VERSION,
-			'dev_mode' => true,
+			'dev_mode' => $dev_mode,
 			'active_theme_directory' => get_stylesheet_directory(),
 			'components_directory' => 'components',
 			'file_directory' => 'assets',

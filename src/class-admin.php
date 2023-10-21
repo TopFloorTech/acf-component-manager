@@ -121,6 +121,16 @@ class Admin {
 	}
 
 	/**
+	 * Enqueue styles.
+	 *
+	 * @since 0.0.1
+	 */
+	public function enqueue_styles() {
+		wp_register_style( 'acf-component-manager', ACF_COMPONENT_MANAGER_ADMIN_ASSETS . 'css/acf-component-manager.css', array(), ACF_COMPONENT_MANAGER_VERSION );
+		wp_enqueue_style( 'acf-component-manager' );
+	}
+
+	/**
 	 * Gets admin hooks.
 	 *
 	 * @since 0.0.1

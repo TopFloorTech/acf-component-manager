@@ -1,0 +1,10 @@
+/**
+ * @file
+ * Provides styles for ACF Component Manager admin.
+ */
+
+.acf-component-manager-example {
+	display: block;
+	line-height: 1.5;
+	padding: 3px;
+}

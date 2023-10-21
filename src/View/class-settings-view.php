@@ -72,6 +72,7 @@ class SettingsView extends ViewBase {
 	 */
 	public function dashboard( array $settings ) {
 		?>
+		<h3><?php print __( 'Settings', 'acf-component-manager' ); ?></h3>
 		<table class="widefat">
 			<tbody>
 			<tr>

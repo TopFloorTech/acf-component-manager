@@ -376,7 +376,7 @@ class ComponentManager {
 	 * @return array
 	 *   An array of ACF field groups.
 	 */
-	public function get_acf_field_groups() {
+	public function get_acf_field_groups() : array {
 		$acf_field_groups = array();
 		$args = array(
 			'post_type' => 'acf-field-group',

@@ -162,10 +162,9 @@ class AcfComponentManager {
 	private function define_admin_hooks() {
 
 		$plugin_admin = $this->admin;
-		if ( wp_get_environment_type() == 'development' ) {
-			$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
-		}
+		$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 
 		$component_manager = $this->componentManager;
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_components', $component_manager, 'render_page', 10, 2 );
