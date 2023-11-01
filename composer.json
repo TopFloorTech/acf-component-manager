@@ -1,0 +1,7 @@
+{
+	"name": "scottsawyer/acf-component-manager",
+	"description": "Allows organizing Advanced Custom Fields into theme components.",
+	"type": "wordpress-plugin",
+	"license": "GPL-3.0-or-later",
+	"homepage": "https://github.com/scottsawyer/acf-component-manager"
+}
