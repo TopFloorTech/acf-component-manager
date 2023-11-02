@@ -68,30 +68,30 @@ jobs:
           phpunit
           WP_MULTISITE=1 phpunit
 
-    lint:
-      runs-on:  ubuntu-latest
-      name: PHP lint
-      steps:
-        - uses: actions/checkout@v2
-        - name: Setup PHP
-          uses: shivammathur/setup-php@v2
-          with:
-            php-version: 7.3
-            extensions: mbstring, intl #optional, setup extensions
-            ini-values: post_max_size=256M, short_open_tag=On #optional, setup php.ini configuration
-            coverage: xdebug #optional, setup coverage driver
+  lint:
+    runs-on:  ubuntu-latest
+    name: PHP lint
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.3
+          extensions: mbstring, intl #optional, setup extensions
+          ini-values: post_max_size=256M, short_open_tag=On #optional, setup php.ini configuration
+          coverage: xdebug #optional, setup coverage driver
 
-        - name: Check PHP Version
-          run: php -v
+      - name: Check PHP Version
+        run: php -v
 
-        - name: Cache composer packages
-          uses: actions/cache@v2
-          with:
-            path: vendor
-            key: composer-${{ hashFiles('composer.lock') }}
+      - name: Cache composer packages
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
 
-        - name: Composer install
-          run: composer install --optimize-autoloader --prefer-dist
+      - name: Composer install
+        run: composer install --optimize-autoloader --prefer-dist
 
-        - name: phpcs tests
-          run: composer phpcs
+      - name: phpcs tests
+        run: composer phpcs
