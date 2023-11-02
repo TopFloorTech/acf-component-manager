@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use AcfComponentManager\Controller\ComponentManager;
 
-class ComponentManagerTest extends TestCase {
+class TestComponentManager extends TestCase {
 	protected $componentManager;
 
 	protected function setUp(): void {
