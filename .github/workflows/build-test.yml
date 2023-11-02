@@ -36,7 +36,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, intl, mysqli
-          init-valuse: post_max_size=256M, short_open_tag=On
+          ini-values: post_max_size=256M, short_open_tag=On
           coverage: none
 
       - name: Check PHP Version
