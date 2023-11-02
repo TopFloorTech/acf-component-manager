@@ -125,7 +125,7 @@ class SettingsManager {
 			$components_directory = sanitize_text_field( $form_data['components_directory'] );
 			$components_directory_parts = explode( '/', $components_directory );
 			$directory_parts = array();
-			foreach( $components_directory_parts as $part ) {
+			foreach ( $components_directory_parts as $part ) {
 				if ( ! empty( $part ) ) {
 					$directory_parts[] = $part;
 				}
@@ -139,7 +139,7 @@ class SettingsManager {
 			$file_directory = sanitize_text_field( $form_data['file_directory'] );
 			$file_directory_parts = explode( '/', $file_directory );
 			$directory_parts = array();
-			foreach( $file_directory_parts as $part ) {
+			foreach ( $file_directory_parts as $part ) {
 				if ( ! empty( $part ) ) {
 					$directory_parts[] = $part;
 				}
@@ -149,7 +149,6 @@ class SettingsManager {
 		$settings['file_directory'] = $file_directory;
 
 		update_option( SETTINGS_OPTION_NAME, $settings );
-
 	}
 
 }

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * Provides a base class for forms.
+ */
+
 namespace AcfComponentManager\Form;
 
 // If called directly, short.
@@ -7,16 +12,17 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
- * Base for forms.
+ * Base class for forms.
  *
  * @since 0.0.1
  */
-class FormBase {
+abstract class FormBase {
 
 	/**
 	 * The form url.
 	 *
 	 * @since 0.0.1
+	 *
 	 * @var string
 	 */
 	protected $formUrl;
@@ -25,6 +31,7 @@ class FormBase {
 	 * Constructs a new FormBase object.
 	 *
 	 * @since 0.0.1
+	 *
 	 * @param string $form_url
 	 *   The form URL.
 	 */
