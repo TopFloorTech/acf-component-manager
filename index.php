@@ -1,1 +1,6 @@
-<?php // Silence is golden
+<?php
+/**
+ * @file
+ *
+ * @package acf-component-manager
+ */

@@ -12,6 +12,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 use AcfComponentManager\Form\ComponentForm;
+use AcfComponentManager\Form\ComponentsExportForm;
 use AcfComponentManager\View\ComponentView;
 use AcfComponentManager\NoticeManager;
 
@@ -68,7 +69,7 @@ class ComponentManager {
 	 *   The form URL.
 	 */
 	public function render_page( string $action = 'view', string $form_url = '' ) {
-		print '<h2>' . __( 'Manage Components', 'acf-component_manager' ) . '</h2>';
+		print '<h2>' . __( 'Manage Components', 'acf-component-manager' ) . '</h2>';
 
 		switch ( $action ) {
 			case 'view':
@@ -119,6 +120,19 @@ class ComponentManager {
 	}
 
 	/**
+	 * Tools.
+	 *
+	 * @param string $action
+	 *   The current action.
+	 * @param string $form_url
+	 *   The form URL.
+	 */
+	public function tools( string $action, string $form_url ) {
+		$export_form = new ComponentsExportForm( $form_url );
+		$export_form->form();
+	}
+
+	/**
 	 * Add menu tab.
 	 *
 	 * @param array $tabs
@@ -162,6 +176,25 @@ class ComponentManager {
 			}
 			$this->set_stored_components( $save_components );
 		}
+	}
+
+	/**
+	 * Export Components.
+	 *
+	 * @since 0.0.1
+	 * @param array $export_options
+	 *   An array of export options.
+	 *
+	 * @see \AcfComponentManager\Admin::export().
+	 */
+	public function export( array $export_options ) {
+		$components = $this->get_stored_components();
+
+		header('Content-Type: application/json' );
+		header( 'Content-Disposition: attachment; filename=managed-components.json' );
+		header( 'Pragma: no-cache' );
+		print json_encode( $components );
+		exit;
 	}
 
 	/**
@@ -365,6 +398,7 @@ class ComponentManager {
 				}
 			}
 		}
+
 		return $enabled_components;
 	}
 
@@ -598,6 +632,7 @@ class ComponentManager {
 	public function filter_load_paths( array $paths ) {
 
 		$enabled_components = $this->get_enabled_components();
+
 		if ( ! empty( $enabled_components ) ) {
 			foreach ($enabled_components as $component) {
 				$path_pattern = $this->get_component_path( $component['path'] );

@@ -168,6 +168,24 @@ class Admin {
 	}
 
 	/**
+	 * Export.
+	 *
+	 * @since 0.0.1
+	 */
+	public function export() {
+		if ( ! wp_verify_nonce( $_REQUEST['export'], 'acf_component_manager' ) ) {
+			return;
+		}
+
+		if ( ! isset( $_REQUEST['callback'] ) ) {
+			return;
+		}
+
+		// Figure out how to export a file generically.
+		do_action( "acf_component_manager_export_{$_REQUEST['callback']}", $_REQUEST );
+	}
+
+	/**
 	 * Delete items.
 	 *
 	 * @since 2.0.0
@@ -203,6 +221,9 @@ class Admin {
 			switch ( $_POST['action'] ) {
 				case 'save':
 					$this->save();
+					break;
+				case 'export':
+					$this->export();
 					break;
 				case 'delete':
 					break;
@@ -245,7 +266,7 @@ class Admin {
 	 * @return array $settings
 	 */
 	private function get_settings() {
-		return get_option( 'acf-component-manager-settings' );
+		return get_option( SETTINGS_OPTION_NAME );
 	}
 
 	/**

@@ -26,8 +26,13 @@ class ComponentForm extends FormBase {
 			<input type="hidden" name="callback" value="manage_components">
 			<div class="instructions">
 				<p><?php print __( 'ACF Component Manager helps manage ACF components.', 'acf-component-manager' ); ?></p>
-				<p class="instructions">To manage components with Component Manager, export the ACF component and place the JSON file in your theme's <code>/components/{component_name}/assets</code> directory.</p>
-				<p class="warning">There can only be one ACF JSON export per directory, and the 'key' must be unique.</p>
+				<p class="instructions">
+					<?php
+					printf ( __( 'To manage components with Component Manager, export the ACF component and place the JSON file in your theme\'s <code>/%1$s/{component_name}/%2$s</code> directory.', 'acf-component-manager'), 'components', 'assets');
+					?>
+				</p>
+
+				<p class="warning"><?php print __( 'There can only be one ACF JSON export per directory, and the \'key\' must be unique.', 'acf-component-manager' ); ?></p>
 			</div>
 
 			<?php if ( ! empty( $components ) ) : ?>
@@ -115,10 +120,10 @@ class ComponentForm extends FormBase {
 				<?php endforeach; ?>
 				</tbody>
 			</table>
-				<p class="submit">
+
 					<?php submit_button( __( 'Save Components', 'acf-component-manager' ), 'primary', 'submit' ); ?>
 					<input type="hidden" name="acf_component_manager_submit" value="1">
-				</p>
+
 			<?php else : ?>
 			<div class="warning"><?php _e( 'No components found.', 'topfloor-parcel' ); ?></div>
 			<?php endif; ?>

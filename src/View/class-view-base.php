@@ -57,7 +57,7 @@ class ViewBase {
 	 * @param string $action
 	 *   The new action.
 	 */
-	public function update_action( $action ) {
+	public function update_action( string $action ) {
 		$original_url = $this->get_form_url();
 		$query = parse_url( $original_url, PHP_URL_QUERY );
 		$query_parts = explode( '&', $query );

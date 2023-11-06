@@ -14,6 +14,7 @@ if ( ! defined( 'WPINC' ) ) {
 use AcfComponentManager\Controller\ComponentManager;
 use AcfComponentManager\Controller\SettingsManager;
 use AcfComponentManager\Controller\DashboardManager;
+use AcfComponentManager\Controller\ToolsManager;
 use AcfComponentManager\NoticeManager;
 
 class AcfComponentManager {
@@ -93,6 +94,13 @@ class AcfComponentManager {
 	protected $dashboardManager;
 
 	/**
+	 * AcfComponentManager\Controller\ToolsManager definition.
+	 *
+	 * @var \AcfComponentManager\Controller\ToolsManager
+	 */
+	protected $toolsManager;
+
+	/**
 	 * Options.
 	 *
 	 * @since 0.0.1
@@ -135,6 +143,7 @@ class AcfComponentManager {
 		$this->componentManager = new ComponentManager();
 		$this->settingsManager = new SettingsManager();
 		$this->dashboardManager = new DashboardManager();
+		$this->toolsManager = new ToolsManager();
 		$this->noticeManager = new NoticeManager();
 	}
 
@@ -169,8 +178,10 @@ class AcfComponentManager {
 		$component_manager = $this->componentManager;
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_components', $component_manager, 'render_page', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_dashboard', $component_manager, 'dashboard', 10 );
+		$this->loader->add_action( 'acf_component_manager_tools', $component_manager, 'tools', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_components', $component_manager, 'save', 10, 1 );
-		$this->loader->add_filter(  'acf_component_manager_tabs', $component_manager, 'add_menu_tab', 15 );
+		$this->loader->add_action( 'acf_component_manager_export_manage_components', $component_manager, 'export', 10, 1 );
+		$this->loader->add_filter( 'acf_component_manager_tabs', $component_manager, 'add_menu_tab', 15 );
 		$this->loader->add_filter( 'acf/json/save_file_name', $component_manager, 'filter_save_filename', 10, 3 );
 		$this->loader->add_filter( 'acf/json/save_paths', $component_manager, 'filter_save_paths', 10, 2 );
 		$this->loader->add_filter( 'acf/settings/load_json', $component_manager, 'filter_load_paths', 10, 1 );
@@ -178,6 +189,11 @@ class AcfComponentManager {
 		$dashboard_manager = $this->dashboardManager;
 		$this->loader->add_filter( 'acf_component_manager_render_page_dashboard', $dashboard_manager, 'render_page' );
 		$this->loader->add_filter(  'acf_component_manager_tabs', $dashboard_manager, 'add_menu_tab', 5 );
+
+		$tools_manager = $this->toolsManager;
+		$this->loader->add_action( 'acf_component_manager_render_page_tools', $tools_manager, 'render_page', 10, 2 );
+		$this->loader->add_filter( 'acf_component_manager_tabs', $tools_manager, 'add_menu_tab', 15 );
+
 		$settings_manager = $this->settingsManager;
 		$this->loader->add_action( 'acf_component_manager_render_page_manage_settings', $settings_manager, 'render_page', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_dashboard', $settings_manager, 'dashboard', 5 );
