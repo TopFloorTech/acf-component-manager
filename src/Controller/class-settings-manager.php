@@ -1,7 +1,8 @@
 <?php
 /**
- * @file
  * Contains the SettingsManager class.
+ *
+ * @package 0.0.1
  */
 
 namespace AcfComponentManager\Controller;
@@ -17,6 +18,8 @@ use AcfComponentManager\View\SettingsView;
 
 /**
  * Contains SettingsManager.
+ *
+ * @since 0.0.1
  */
 class SettingsManager {
 
@@ -41,8 +44,7 @@ class SettingsManager {
 	/**
 	 * Add menu tab.
 	 *
-	 * @param array $tabs
-	 *   Existing tabs.
+	 * @param array $tabs Existing tabs.
 	 *
 	 * @retun array
 	 *   The tabs.
@@ -74,10 +76,8 @@ class SettingsManager {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param string $action
-	 *   The current action.
-	 * @param string $form_url
-	 *   The form URL.
+	 * @param string $action   The current action.
+	 * @param string $form_url The form URL.
 	 */
 	public function render_page( string $action = 'view', string $form_url = '' ) {
 		print '<h2>' . __( 'Manage Settings', 'acf-component_manager' ) . '</h2>';
@@ -109,8 +109,7 @@ class SettingsManager {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param array $form_data
-	 *   The form data array.
+	 * @param array $form_data The form data array.
 	 */
 	public function save( array $form_data ) {
 		$dev_mode = false;
@@ -150,5 +149,4 @@ class SettingsManager {
 
 		update_option( SETTINGS_OPTION_NAME, $settings );
 	}
-
 }

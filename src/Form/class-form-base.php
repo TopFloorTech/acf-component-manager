@@ -1,7 +1,8 @@
 <?php
 /**
- * @file
  * Provides a base class for forms.
+ *
+ * @package acf-component-manager
  */
 
 namespace AcfComponentManager\Form;

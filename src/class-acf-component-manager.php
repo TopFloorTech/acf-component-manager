@@ -255,5 +255,4 @@ class AcfComponentManager {
 	public function get_version() {
 		return $this->version;
 	}
-
 }

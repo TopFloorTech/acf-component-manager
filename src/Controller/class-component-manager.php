@@ -63,10 +63,8 @@ class ComponentManager {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param string $action
-	 *   The current action.
-	 * @param string $form_url
-	 *   The form URL.
+	 * @param string $action		The current action.
+	 * @param string $form_url	The form URL.
 	 */
 	public function render_page( string $action = 'view', string $form_url = '' ) {
 		print '<h2>' . __( 'Manage Components', 'acf-component-manager' ) . '</h2>';
@@ -122,10 +120,8 @@ class ComponentManager {
 	/**
 	 * Tools.
 	 *
-	 * @param string $action
-	 *   The current action.
-	 * @param string $form_url
-	 *   The form URL.
+	 * @param string $action		The current action.
+	 * @param string $form_url	The form URL.
 	 */
 	public function tools( string $action, string $form_url ) {
 		$export_form = new ComponentsExportForm( $form_url );
@@ -135,11 +131,9 @@ class ComponentManager {
 	/**
 	 * Add menu tab.
 	 *
-	 * @param array $tabs
-	 *   Existing tabs.
+	 * @param array $tabs Existing tabs.
 	 *
-	 * @retun array
-	 *   The tabs.
+	 * @return array The tabs.
 	 */
 	public function add_menu_tab( array $tabs ) : array {
 		$tabs['manage_components'] = __( 'Manage components', 'acf-component-manager' );
@@ -151,8 +145,7 @@ class ComponentManager {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param array $form_data
-	 *   The form data array.
+	 * @param array $form_data The form data array.
 	 */
 	public function save( array $form_data ) {
 		$theme_components = $this->get_theme_components();
@@ -182,8 +175,7 @@ class ComponentManager {
 	 * Export Components.
 	 *
 	 * @since 0.0.1
-	 * @param array $export_options
-	 *   An array of export options.
+	 * @param array $export_options An array of export options.
 	 *
 	 * @see \AcfComponentManager\Admin::export().
 	 */
@@ -219,11 +211,9 @@ class ComponentManager {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param array $managed_components
-	 *   The components currently managed.
+	 * @param array $managed_components The components currently managed.
 	 *
-	 * @return array
-	 *   Array of components that only exist in the database.
+	 * @return array Array of components that only exist in the database.
 	 */
 	public function get_missing_components( array $managed_components ) {
 
@@ -283,8 +273,7 @@ class ComponentManager {
 	/**
 	 * Get ACF json files from components.
 	 *
-	 * @param array $component
-	 *   The ACF theme component.
+	 * @param array $component The ACF theme component.
 	 *
 	 * @return array
 	 *   An array of discovered ACF files.
@@ -331,8 +320,7 @@ class ComponentManager {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param array $components
-	 *   The components to store.
+	 * @param array $components The components to store.
 	 */
 	public function set_stored_components( array $components ) {
 		update_option( STORED_COMPONENTS_OPTION_NAME, serialize( $components ) );
@@ -359,8 +347,7 @@ class ComponentManager {
 	 * Get stored component.
 	 *
 	 * @since 0.0.1
-	 * @param string $component_hash
-	 *   The component hash.
+	 * @param string $component_hash The component hash.
 	 *
 	 * @return array
 	 *   The stored component.
@@ -369,7 +356,7 @@ class ComponentManager {
 		$stored_component = array();
 
 		$stored_components = $this->get_stored_components();
-		if ( !empty( $stored_components ) ) {
+		if ( ! empty( $stored_components ) ) {
 			foreach ( $stored_components as $hash => $stored ) {
 				if ( $hash == $component_hash ) {
 					$stored_component = $stored;
@@ -479,10 +466,8 @@ class ComponentManager {
 	/**
 	 * Get post by key.
 	 *
-	 * @param string $post_type
-	 *   The ACF post type.
-	 * @param string $key
-	 *   The ACF key.
+	 * @param string $post_type	The ACF post type.
+	 * @param string $key				The ACF key.
 	 *
 	 * @return mixed
 	 *   The post if found.
@@ -502,8 +487,7 @@ class ComponentManager {
 	/**
 	 * Get key from JSON.
 	 *
-	 * @param array $json
-	 *   The JSON array.
+	 * @param array $json The JSON array.
 	 *
 	 * @return string|false
 	 *   The key.
@@ -518,8 +502,7 @@ class ComponentManager {
 	/**
 	 * Map group properties to post.
 	 *
-	 * @param array $component
-	 *   The component array.
+	 * @param array $component The component array.
 	 *
 	 * @param array
 	 *   The post array.
@@ -550,8 +533,7 @@ class ComponentManager {
 		if ( isset( $component['active'] ) ) {
 			if ( $component['active'] == true ) {
 				$group_properties['post_status'] = 'publish';
-			}
-			else {
+			} else {
 				$group_properties['post_status'] = 'acf-disabled';
 			}
 			unset( $component['active'] );
@@ -571,10 +553,8 @@ class ComponentManager {
 	 * Filter save path.
 	 *
 	 * @since 0.0.1
-	 * @param array $paths
-	 *   The ACF JSON save paths.
-	 * @param mixed $post
-	 *   The ACF post.
+	 * @param array $paths	The ACF JSON save paths.
+	 * @param mixed $post		The ACF post.
 	 *
 	 * @return array
 	 *   The altered paths.
@@ -621,8 +601,7 @@ class ComponentManager {
 	 * Filter load paths.
 	 *
 	 * @since 0.0.1
-	 * @param array $paths
-	 *   The paths.
+	 * @param array $paths The paths.
 	 *
 	 * @return array
 	 *   The paths.
@@ -646,12 +625,9 @@ class ComponentManager {
 	 * Filter save file name.
 	 *
 	 * @since 0.0.1
-	 * @param string $filename
-	 *   The ACF file name.
-	 * @param mixed $post
-	 *   The ACF post.
-	 * @param string $load_path
-	 *   The ACF load path.
+	 * @param string $filename	The ACF file name.
+	 * @param mixed $post				The ACF post.
+	 * @param string $load_path	The ACF load path.
 	 *
 	 * @return string
 	 *   The altered file name.
@@ -700,8 +676,7 @@ class ComponentManager {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param string $component_path
-	 *   The path to the component.
+	 * @param string $component_path The path to the component.
 	 *
 	 * @return string|false
 	 *   The full path to the component.
@@ -713,5 +688,4 @@ class ComponentManager {
 		}
 		return false;
 	}
-
 }

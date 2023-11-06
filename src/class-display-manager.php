@@ -24,7 +24,7 @@ class DisplayManager {
 	 *
 	 * @since 0.0.1
 	 * @access protected
-	 * @var string $slug
+	 * @var string
 	 */
 	protected $slug;
 
@@ -47,8 +47,7 @@ class DisplayManager {
 	 * Constructs a new DisplayManager object.
 	 *
 	 * @since 0.0.1
-	 * @param string $slug
-	 *   The slug.
+	 * @param string $slug The slug.
 	 */
 	public function __construct( string $slug ) {
 		$this->slug = $slug;
@@ -67,13 +66,11 @@ class DisplayManager {
 	 * Renders a page.
 	 *
 	 * @since 0.0.1
-	 * @param string $current_tab
-	 *   The current tab.
-	 * @param string $current_action
-	 *   The current action.
+	 * @param string $current_tab		The current tab.
+	 * @param string $current_action	The current action.
 	 */
 	public function render_page( string $current_tab = 'dashboard', string $current_action = 'view' ) {
-		$form_url = $this->get_form_url( $current_tab,  $current_action );
+		$form_url = $this->get_form_url( $current_tab, $current_action );
 		ob_start();
 		?>
 		<div class="wrap">
@@ -109,14 +106,12 @@ class DisplayManager {
 	 * Get form url.
 	 *
 	 * @since 0.0.1
-	 * @param string $tab
-	 *   The tab.
-	 * @param string $action
+	 * @param string $tab		The tab.
+	 * @param string $action	The action.
 	 *
 	 * @return string $form_url
 	 */
 	public function get_form_url( $tab, $action ) {
 		return admin_url( 'admin.php?page=' . $this->slug . '&tab=' . $tab . '&action=' . $action );
 	}
-
 }

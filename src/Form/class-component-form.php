@@ -1,4 +1,11 @@
 <?php
+/**
+ * Component form class.
+ *
+ * @package acf-component-manager
+ *
+ * @since 0.0.1
+ */
 
 namespace AcfComponentManager\Form;
 
@@ -15,8 +22,7 @@ class ComponentForm extends FormBase {
 	/**
 	 * Provides the ComponentForm form.
 	 *
-	 * @param array $components
-	 *   An array of theme components.
+	 * @param array $components An array of theme components.
 	 */
 	public function form( array $components ) {
 		?>
@@ -46,7 +52,7 @@ class ComponentForm extends FormBase {
 				</tr>
 				</thead>
 				<tbody>
-				<?php foreach( $components as $component => $component_properties ) : ?>
+				<?php foreach ( $components as $component => $component_properties ) : ?>
 					<tr class="form-field form-required">
 						<th class="row row-title">
 							<label for="<?php print $component_properties['hash']; ?>">
@@ -65,8 +71,7 @@ class ComponentForm extends FormBase {
 										?>
 									</td>
 									<?php
-								}
-								elseif ( count( $component_properties['files'] ) == 1 ) {
+								} elseif ( count( $component_properties['files'] ) == 1 ) {
 									?>
 									<td>
 										<input
@@ -98,8 +103,7 @@ class ComponentForm extends FormBase {
 										</label>
 									</td>
 								<?php
-								}
-								else {
+								} else {
 									?>
 									<td colspan="3">
 									<?php print __( 'No files found.  Export the ACF component and place in the active theme.', 'acf-component-manager' ); ?>
@@ -107,8 +111,7 @@ class ComponentForm extends FormBase {
 
 									<?php
 								}
-							}
-							else {
+							} else {
 								?>
 								<td colspan="3">
 									<?php print __( 'No files found.  Export the ACF component and place in the active theme.', 'acf-component-manager' ); ?>

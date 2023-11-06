@@ -69,14 +69,10 @@ class NoticeManager {
 	/**
 	 * Add notice.
 	 *
-	 * @param string $message
-	 *    The message.
-	 * @param string $type
-	 *   One of 'info', 'warning', 'error', 'success'.
-	 * @param bool $dismissible
-	 *   Dismissible or not.
-	 * @param array $scope
-	 *   Defines where to display the message.
+	 * @param string $message The message.
+	 * @param string $type  One of 'info', 'warning', 'error', 'success'.
+	 * @param bool $dismissible Dismissible or not.
+	 * @param array $scope Defines where to display the message.
 	 *
 	 * @since 0.0.1
 	 */

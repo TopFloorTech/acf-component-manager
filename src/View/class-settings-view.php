@@ -1,4 +1,9 @@
 <?php
+/**
+ * Provides Settings view.
+ *
+ * @package acf-component-manager
+ */
 
 namespace AcfComponentManager\View;
 
@@ -9,14 +14,15 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Contains SettingsView.
+ *
+ * @since 0.0.1
  */
 class SettingsView extends ViewBase {
 
 	/**
 	 * The Settings view.
 	 *
-	 * @param array $settings
-	 *   The settings array.
+	 * @param array $settings The settings array.
 	 */
 	public function view( array $settings ) {
 
@@ -33,8 +39,7 @@ class SettingsView extends ViewBase {
 					<?php
 					if ( $settings['dev_mode'] ) {
 						print __( 'Enabled', 'acf-component-manager' );
-					}
-					else {
+					} else {
 						print __( 'Disabled', 'acf-component-manager' );
 					}
 					?>
@@ -67,8 +72,7 @@ class SettingsView extends ViewBase {
 	 * Dashboard display.
 	 *
 	 * @since 0.0.1
-	 * @param array $settings
-	 *   The plugin settings.
+	 * @param array $settings The plugin settings.
 	 */
 	public function dashboard( array $settings ) {
 		?>
@@ -83,8 +87,7 @@ class SettingsView extends ViewBase {
 					<?php
 					if ( $settings['dev_mode'] ) {
 						print __( 'Enabled', 'acf-component-manager' );
-					}
-					else {
+					} else {
 						print __( 'Disabled', 'acf-component-manager' );
 					}
 					?>

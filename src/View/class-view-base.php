@@ -1,4 +1,9 @@
 <?php
+/**
+ * Provides view base class.
+ *
+ * @package acf-component-manager
+ */
 
 namespace AcfComponentManager\View;
 
@@ -9,6 +14,8 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Contains a base class for views.
+ *
+ * @since 0.0.1
  */
 class ViewBase {
 
@@ -22,8 +29,7 @@ class ViewBase {
 	/**
 	 * Constructs a new ViewBase object.
 	 *
-	 * @param string $form_url
-	 *   The form URL.
+	 * @param string $form_url The form URL.
 	 */
 	public function __construct( string $form_url ) {
 		$this->formUrl = $form_url;
@@ -42,8 +48,7 @@ class ViewBase {
 	/**
 	 * Setter for formUrl.
 	 *
-	 * @param string $url
-	 *   The URL to set.
+	 * @param string $url The URL to set.
 	 *
 	 * @return void
 	 */
@@ -54,8 +59,7 @@ class ViewBase {
 	/**
 	 * Update action.
 	 *
-	 * @param string $action
-	 *   The new action.
+	 * @param string $action The new action.
 	 */
 	public function update_action( string $action ) {
 		$original_url = $this->get_form_url();
@@ -72,5 +76,4 @@ class ViewBase {
 		$updated_url = str_replace( $query, $updated_query, $original_url );
 		$this->set_form_url( $updated_url );
 	}
-
 }

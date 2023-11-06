@@ -14,6 +14,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+/**
+ * Contains Activator class.
+ */
 class Activator {
 
 
@@ -157,5 +160,4 @@ class Activator {
 		$current_version = phpversion();
 		return version_compare( $current_version, self::$min_php_version, '>=' );
 	}
-
 }

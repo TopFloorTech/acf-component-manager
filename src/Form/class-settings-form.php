@@ -1,17 +1,23 @@
 <?php
+/**
+ * Settings form class.
+ *
+ * @package acf-component-manager
+ */
 
 namespace AcfComponentManager\Form;
 
 /**
  * Contains class for SettingsForm.
+ *
+ * @since 0.0.1
  */
 class SettingsForm extends FormBase {
 
 	/**
 	 * Provides the SettingsForm form.
 	 *
-	 * @param array $settings
-	 *   The settings.
+	 * @param array $settings The settings.
 	 */
 	public function form( array $settings ) {
 		?>

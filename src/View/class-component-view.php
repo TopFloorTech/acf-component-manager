@@ -22,9 +22,9 @@ class ComponentView extends ViewBase {
 	/**
 	 * Provides the ComponentView view.
 	 *
-	 * @param array $managed_components 	An array of theme components.
-	 * @param array $unmanaged_components 	An array of components not managed.
-	 * @param array $missing_components 	An array of database components not in code.
+	 * @param array $managed_components    An array of theme components.
+	 * @param array $unmanaged_components  An array of components not managed.
+	 * @param array $missing_components    An array of database components not in code.
 	 */
 	public function view( array $managed_components, array $unmanaged_components, array $missing_components ) {
 
@@ -74,8 +74,7 @@ class ComponentView extends ViewBase {
 						<?php
 						if ( $component['enabled'] ) {
 							print 'Yes';
-						}
-						else {
+						} else {
 							print 'No';
 						}
 						?>
@@ -162,8 +161,7 @@ class ComponentView extends ViewBase {
 	public function dashboard( array $enabled_components ) {
 		if ( empty( $enabled_components ) ) {
 			print '<p>' . __( 'No enabled components.', 'acf-component-manager' ) . '</p>';
-		}
-		else {
+		} else {
 			print '<h3>' . __( 'Enabled components', 'acf-component-manager' ) . '</h3>';
 			?>
 			<table class="widefat">
@@ -181,32 +179,31 @@ class ComponentView extends ViewBase {
 				</tr>
 				</thead>
 				<tbody>
-				<?php foreach ( $enabled_components as $component ) : ?>
-					<tr>
-						<td class="row-title">
-							<?php if ( isset( $component['name'] ) ) : ?>
-							<?php print  $component['name']; ?>
-							<?php endif; ?>
-						</td>
-						<td>
-							<?php if ( isset( $component['file'] ) ) : ?>
-							<?php print $component['file']; ?>
-							<?php endif; ?>
-						</td>
-						<td>
-							<?php if ( isset( $component['enabled'] ) ) : ?>
-							<?php
-							if ( $component['enabled'] ) {
-								print 'Yes';
-							}
-							else {
-								print 'No';
-							}
-							?>
-							<?php endif; ?>
-						</td>
-					</tr>
-				<?php endforeach; ?>
+					<?php foreach ( $enabled_components as $component ) : ?>
+						<tr>
+							<td class="row-title">
+								<?php if ( isset( $component['name'] ) ) : ?>
+								<?php print  $component['name']; ?>
+								<?php endif; ?>
+							</td>
+							<td>
+								<?php if ( isset( $component['file'] ) ) : ?>
+								<?php print $component['file']; ?>
+								<?php endif; ?>
+							</td>
+							<td>
+								<?php if ( isset( $component['enabled'] ) ) : ?>
+								<?php
+								if ( $component['enabled'] ) {
+									print 'Yes';
+								} else {
+									print 'No';
+								}
+								?>
+								<?php endif; ?>
+							</td>
+						</tr>
+					<?php endforeach; ?>
 				</tbody>
 			</table>
 			<?php

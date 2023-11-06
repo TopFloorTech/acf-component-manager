@@ -14,6 +14,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+/**
+ * Admin class.
+ */
 class Admin {
 
 	/**
@@ -275,9 +278,9 @@ class Admin {
 	 * Fires when update_option() is complete.
 	 *
 	 * @since 0.0.1
-	 * @param mixed $old_value
-	 * @param mixed $new_value
-	 * @param string $option_name
+	 * @param mixed $old_value     The value before update.
+	 * @param mixed $new_value     The new value.
+	 * @param string $option_name  The option to be updated.
 	 */
 	public function option_manager( $old_value, $new_value, $option_name ) {
 		$settings = $this->get_settings();
@@ -364,5 +367,4 @@ class Admin {
 	public function get_query_string() {
 		return $this->queryString;
 	}
-
 }

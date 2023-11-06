@@ -1,7 +1,8 @@
 <?php
 /**
- * @file
  * Contains Tools Manager class.
+ *
+ * @package acf-component-manager
  */
 
 namespace AcfComponentManager\Controller;
@@ -11,6 +12,11 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+/**
+ * Manages tools.
+ *
+ * @since 0.0.1
+ */
 class ToolsManager {
 
 	/**
@@ -18,10 +24,8 @@ class ToolsManager {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param string $action
-	 *   The current action.
-	 * @param string $form_url
-	 *   The form URL.
+	 * @param string $action   The current action.
+	 * @param string $form_url The form URL.
 	 */
 	public function render_page( string $action = 'view', string $form_url = '' ) {
 		print '<h2>' . __( 'Tools', 'acf-component-manager' );
@@ -37,8 +41,7 @@ class ToolsManager {
 	/**
 	 * Add menu tab.
 	 *
-	 * @param array $tabs
-	 *   Existing tabs.
+	 * @param array $tabs Existing tabs.
 	 *
 	 * @return array
 	 *   The updated tabs.

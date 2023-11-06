@@ -1,7 +1,8 @@
 <?php
 /**
- * @file
  * Contains Dashboard Manager class.
+ *
+ * @package acf-component-manager
  */
 
 namespace AcfComponentManager\Controller;
@@ -11,6 +12,11 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+/**
+ * Manages dashbaod.
+ *
+ * @since 0.0.1
+ */
 class DashboardManager {
 
 	/**
@@ -18,10 +24,8 @@ class DashboardManager {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param string $action
-	 *   The current action.
-	 * @param string $form_url
-	 *   The form URL.
+	 * @param string $action   The current action.
+	 * @param string $form_url The form URL.
 	 */
 	public function render_page( string $action = 'view', string $form_url = '' ) {
 		print '<h2>' . __( 'ACF Component Manager Dashboard', 'acf-component_manager' ) . '</h2>';
