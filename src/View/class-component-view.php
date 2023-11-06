@@ -1,4 +1,11 @@
 <?php
+/**
+ * Component manager view.
+ *
+ * @package acf-component-manager
+ *
+ * @since 0.0.1
+ */
 
 namespace AcfComponentManager\View;
 
@@ -15,19 +22,15 @@ class ComponentView extends ViewBase {
 	/**
 	 * Provides the ComponentView view.
 	 *
-	 * @param array $managed_components
-	 *   An array of theme components.
-	 * @param array $unmanaged_components
-	 *   An array of components not managed.
-	 * @param array $missing_components
-	 *   An array of database components not in code.
+	 * @param array $managed_components 	An array of theme components.
+	 * @param array $unmanaged_components 	An array of components not managed.
+	 * @param array $missing_components 	An array of database components not in code.
 	 */
 	public function view( array $managed_components, array $unmanaged_components, array $missing_components ) {
 
 		if ( empty( $managed_components ) && empty( $unmanaged_components ) ) {
 			print '<p>' . __( 'No theme components found.', 'acf-component-manager' ) . '</p>';
 		}
-
 		else {
 			$this->update_action( 'edit' );
 			?>
@@ -56,7 +59,7 @@ class ComponentView extends ViewBase {
 				</tr>
 				</thead>
 				<tbody>
-			<?php foreach( $managed_components as $component ) : ?>
+			<?php foreach ( $managed_components as $component ) : ?>
 				<tr>
 					<td class="row-title">
 						<?php print  $component['name']; ?>
@@ -94,7 +97,7 @@ class ComponentView extends ViewBase {
 				</tr>
 				</thead>
 				<tbody>
-				<?php foreach( $unmanaged_components as $component ) : ?>
+				<?php foreach ( $unmanaged_components as $component ) : ?>
 					<tr>
 						<td class="row-title">
 							<?php print $component['name']; ?>
@@ -178,7 +181,7 @@ class ComponentView extends ViewBase {
 				</tr>
 				</thead>
 				<tbody>
-				<?php foreach( $enabled_components as $component ) : ?>
+				<?php foreach ( $enabled_components as $component ) : ?>
 					<tr>
 						<td class="row-title">
 							<?php if ( isset( $component['name'] ) ) : ?>
