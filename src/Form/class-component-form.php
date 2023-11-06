@@ -34,7 +34,11 @@ class ComponentForm extends FormBase {
 				<p><?php print __( 'ACF Component Manager helps manage ACF components.', 'acf-component-manager' ); ?></p>
 				<p class="instructions">
 					<?php
-					printf ( __( 'To manage components with Component Manager, export the ACF component and place the JSON file in your theme\'s <code>/%1$s/{component_name}/%2$s</code> directory.', 'acf-component-manager'), 'components', 'assets');
+					printf (
+						__( 'To manage components with Component Manager, export the ACF component and place the JSON file in your theme\'s <code>/%1$s/{component_name}/%2$s</code> directory.', 'acf-component-manager'),
+						'components',
+						'assets'
+					);
 					?>
 				</p>
 

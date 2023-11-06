@@ -9,6 +9,13 @@
 
 spl_autoload_register( 'acf_component_manager_autoloader' );
 
+/**
+ * Auto load function.
+ *
+ * @param $class The class to load.
+ *
+ * @return void
+ */
 function acf_component_manager_autoloader( $class ) {
 	$namespace = 'AcfComponentManager';
 
@@ -18,19 +25,18 @@ function acf_component_manager_autoloader( $class ) {
 
 	$class = str_replace( $namespace, '', $class );
 	$class_parts = explode( '\\', $class );
-	$last_index = count( $class_parts ) -1;
+	$last_index = count( $class_parts ) - 1;
 	$caps = '/(?=[A-Z])/';
-	$class_file_parts = preg_split( $caps, lcfirst( $class_parts[$last_index] ) );
+	$class_file_parts = preg_split( $caps, lcfirst( $class_parts[ $last_index ] ) );
 	$class_file_name  = 'class-' . implode( '-', $class_file_parts ) . '.php';
-	$class_parts[$last_index] = strtolower( $class_file_name );
+	$class_parts[ $last_index ] = strtolower( $class_file_name );
 	$class = implode( DIRECTORY_SEPARATOR, $class_parts );
 
 	$path = ACF_COMPONENT_MANAGER_PATH . 'src' . $class;
 
 	if ( file_exists( $path ) ) {
 		require_once $path;
-	}
-	else {
+	} else {
 		die( $path );
 	}
 }

@@ -66,8 +66,8 @@ class DisplayManager {
 	 * Renders a page.
 	 *
 	 * @since 0.0.1
-	 * @param string $current_tab		The current tab.
-	 * @param string $current_action	The current action.
+	 * @param string $current_tab    The current tab.
+	 * @param string $current_action The current action.
 	 */
 	public function render_page( string $current_tab = 'dashboard', string $current_action = 'view' ) {
 		$form_url = $this->get_form_url( $current_tab, $current_action );
@@ -106,8 +106,8 @@ class DisplayManager {
 	 * Get form url.
 	 *
 	 * @since 0.0.1
-	 * @param string $tab		The tab.
-	 * @param string $action	The action.
+	 * @param string $tab    The tab.
+	 * @param string $action The action.
 	 *
 	 * @return string $form_url
 	 */
