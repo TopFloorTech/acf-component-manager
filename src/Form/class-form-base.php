@@ -33,8 +33,7 @@ abstract class FormBase {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param string $form_url
-	 *   The form URL.
+	 * @param string $form_url The form URL.
 	 */
 	public function __construct( string $form_url ) {
 		$this->formUrl = $form_url;

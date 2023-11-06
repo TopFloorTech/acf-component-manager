@@ -76,7 +76,8 @@ class DashboardManager {
 			<li><?php print __( 'Enable "Dev mode"', 'acf-component-manager' ); ?></li>
 			<li>
 				<?php
-				printf( __( 'Sync components, see <a href="%s" target="_blank">Syncing Changes</a>', 'acf-component-manager' ),
+				printf(
+					__( 'Sync components, see <a href="%s" target="_blank">Syncing Changes</a>', 'acf-component-manager' ),
 					esc_url( 'https://www.advancedcustomfields.com/resources/local-json/#syncing-changes' ),
 				);
 				?>
@@ -90,15 +91,13 @@ class DashboardManager {
 	/**
 	 * Add menu tab.
 	 *
-	 * @param array $tabs
-	 *   Existing tabs.
+	 * @param array $tabs Existing tabs.
 	 *
 	 * @retun array
 	 *   The tabs.
 	 */
-	public function add_menu_tab( array $tabs ) : array {
+	public function add_menu_tab( array $tabs ): array {
 		$tabs['dashboard'] = __( 'Dashboard', 'acf-component-manager' );
 		return $tabs;
 	}
-
 }

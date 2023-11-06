@@ -28,7 +28,7 @@ class NoticeManager {
 		global $pagenow;
 		$notices = $this->get_notices();
 		if ( ! empty( $notices ) ) {
-			foreach( $notices as $id => $notice ) {
+			foreach ( $notices as $id => $notice ) {
 				if ( ! isset( $notice['scope'] ) ) {
 					continue;
 				}
@@ -92,7 +92,7 @@ class NoticeManager {
 		if ( array_search( $hash, array_column( $notices, 'hash' ), true ) === false ) {
 			$new_notice['hash'] = $hash;
 			$id = uniqid();
-			$notices[$id] = $new_notice;
+			$notices[ $id ] = $new_notice;
 			update_option( NOTICES_OPTION_NAME, $notices );
 		}
 	}
@@ -105,8 +105,8 @@ class NoticeManager {
 	public function dismiss_notice() {
 		$dismiss_notice = filter_input( INPUT_GET, 'acf-component-manager-notice-dismiss', FILTER_SANITIZE_STRING );
 		$notices = $this->get_notices();
-		if ( isset( $notices[$dismiss_notice] ) ) {
-			unset( $notices[$dismiss_notice] );
+		if ( isset( $notices[ $dismiss_notice ] ) ) {
+			unset( $notices[ $dismiss_notice ] );
 			update_option( NOTICES_OPTION_NAME, $notices );
 		}
 	}
@@ -119,7 +119,7 @@ class NoticeManager {
 	 * @return array
 	 *   The stored notices.
 	 */
-	public function get_notices() : array {
+	public function get_notices(): array {
 		return get_option( NOTICES_OPTION_NAME, array() );
 	}
 

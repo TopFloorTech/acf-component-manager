@@ -258,7 +258,8 @@ class Admin {
 	public function action_links( $links ) {
 		return array_merge( [
 			'settings' => '<a href="' . admin_url( 'options-general.php?page=acf-component-manager' ) . '">' . __( 'Settings', 'rate-cal' ) . '</a>',
-		], $links );
+		],
+			$links );
 	}
 
 	/**
@@ -284,7 +285,6 @@ class Admin {
 	 */
 	public function option_manager( $old_value, $new_value, $option_name ) {
 		$settings = $this->get_settings();
-
 	}
 
 	/**

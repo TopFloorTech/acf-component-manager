@@ -46,9 +46,8 @@ class ToolsManager {
 	 * @return array
 	 *   The updated tabs.
 	 */
-	public function add_menu_tab( array $tabs ) : array {
+	public function add_menu_tab( array $tabs ): array {
 		$tabs['tools'] = __( 'Tools', 'acf-component-manager' );
 		return $tabs;
 	}
-
 }
