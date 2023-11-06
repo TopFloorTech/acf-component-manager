@@ -1,7 +1,10 @@
 <?php
 /**
- * @file
  * Contains Notices class.
+ *
+ * @package acf-component-manager
+ *
+ * @since 0.0.1
  */
 
 namespace AcfComponentManager;

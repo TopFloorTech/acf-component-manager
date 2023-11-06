@@ -1,7 +1,10 @@
 <?php
 /**
- * @file
  * Provides the display manager.
+ *
+ * @package acf-component-manager
+ *
+ * @since 0.0.1
  */
 
 namespace AcfComponentManager;
@@ -11,6 +14,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+/**
+ * Manages display.
+ */
 class DisplayManager {
 
 	/**

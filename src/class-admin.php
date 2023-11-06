@@ -1,7 +1,8 @@
 <?php
 /**
- * @file
  * The admin-specific functionality of the plugin.
+ *
+ * @package acf-component-manager
  *
  * @since 0.0.1
  */

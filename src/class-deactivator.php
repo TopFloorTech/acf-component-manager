@@ -1,7 +1,8 @@
 <?php
 /**
- * @file
  * Deactivates plugin.
+ *
+ * @package acf-component-manager
  *
  * @since 0.0.1
  */
@@ -13,6 +14,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+/**
+ * Deactivates plugin.
+ */
 class Deactivator {
 
 	/**

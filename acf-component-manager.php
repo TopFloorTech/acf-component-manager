@@ -1,11 +1,15 @@
 <?php
-
 /**
+ * ACF Component Manager plugin.
+ *
+ * @package acf-component-manager
+ *
  * @wordpress-plugin
  * Plugin Name: ACF Component Manager
  * Description: Manages ACF based components.
  * Version: 0.0.1
  * Author: Scott Sawyer
+ * Text Domain: acf-component-manager
  */
 
 if ( ! defined( 'WPINC' ) ) {

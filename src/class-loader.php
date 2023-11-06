@@ -1,7 +1,8 @@
 <?php
 /**
- * @file
  * Registers all actions and filters for the plugin.
+ *
+ * @package acf-component-manager
  *
  * @since 0.0.1
  */
@@ -13,6 +14,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+/**
+ * Loads hooks and actions.
+ */
 class Loader {
 
 	/**

@@ -1,8 +1,8 @@
 <?php
-
 /**
- * @file
  * The plugin activator.
+ *
+ * @package acf-component-manager
  *
  * @since 0.0.1
  */

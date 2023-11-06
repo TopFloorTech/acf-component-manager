@@ -1,7 +1,10 @@
 <?php
 /**
- * @file
  * Core plugin class.
+ *
+ * @package acf-component-manager
+ *
+ * @since 0.0.1
  */
 
 namespace AcfComponentManager;
@@ -17,6 +20,9 @@ use AcfComponentManager\Controller\DashboardManager;
 use AcfComponentManager\Controller\ToolsManager;
 use AcfComponentManager\NoticeManager;
 
+/**
+ * Main plugin class.
+ */
 class AcfComponentManager {
 
 	/**
