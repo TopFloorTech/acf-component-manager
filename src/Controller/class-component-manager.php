@@ -109,7 +109,6 @@ class ComponentManager {
 				$form->form( $form_components );
 				break;
 		}
-
 	}
 
 	/**
@@ -139,7 +138,7 @@ class ComponentManager {
 	 *
 	 * @return array The tabs.
 	 */
-	public function add_menu_tab( array $tabs ) : array {
+	public function add_menu_tab( array $tabs ): array {
 		$tabs['manage_components'] = __( 'Manage components', 'acf-component-manager' );
 		return $tabs;
 	}
@@ -167,7 +166,7 @@ class ComponentManager {
 				if ( isset( $form_data['enabled'][ $hash ] ) ) {
 					$save_components[ $hash ]['enabled'] = $form_data['enabled'][ $hash ];
 				} else {
-					$save_components[$hash]['enabled'] = false;
+					$save_components[ $hash ]['enabled'] = false;
 				}
 			}
 			$this->set_stored_components( $save_components );
@@ -185,7 +184,7 @@ class ComponentManager {
 	public function export( array $export_options ) {
 		$components = $this->get_stored_components();
 
-		header('Content-Type: application/json' );
+		header( 'Content-Type: application/json' );
 		header( 'Content-Disposition: attachment; filename=managed-components.json' );
 		header( 'Pragma: no-cache' );
 		print json_encode( $components );
@@ -225,7 +224,7 @@ class ComponentManager {
 			return $database_components;
 		}
 
-		return array_filter( $database_components, function( $item ) use ( $managed_components ) {
+		return array_filter ( $database_components, function( $item ) use ( $managed_components ) {
 			return ! in_array( $item['key'], array_column( $managed_components, 'key' ) );
 		} );
 	}
@@ -332,7 +331,7 @@ class ComponentManager {
 	 * @return array
 	 *   The components array.
 	 */
-	public function get_stored_components() : array {
+	public function get_stored_components(): array {
 		$components = array();
 
 		$stored_components = get_option( STORED_COMPONENTS_OPTION_NAME );
@@ -381,7 +380,7 @@ class ComponentManager {
 		if ( ! empty( $stored_components ) ) {
 			foreach ( $stored_components as $hash => $stored ) {
 				if ( isset( $stored['enabled'] ) && $stored['enabled'] ) {
-					$enabled_components[$hash] = $stored;
+					$enabled_components[ $hash ] = $stored;
 				}
 			}
 		}
@@ -529,7 +528,7 @@ class ComponentManager {
 		}
 
 		if ( isset( $component['active'] ) ) {
-			if ( $component['active'] == true ) {
+			if ( true == $component['active'] ) {
 				$group_properties['post_status'] = 'publish';
 			} else {
 				$group_properties['post_status'] = 'acf-disabled';
