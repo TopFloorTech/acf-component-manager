@@ -34,8 +34,8 @@ class ComponentForm extends FormBase {
 				<p><?php print __( 'ACF Component Manager helps manage ACF components.', 'acf-component-manager' ); ?></p>
 				<p class="instructions">
 					<?php
-					printf (
-						__( 'To manage components with Component Manager, export the ACF component and place the JSON file in your theme\'s <code>/%1$s/{component_name}/%2$s</code> directory.', 'acf-component-manager'),
+					printf(
+						__( 'To manage components with Component Manager, export the ACF component and place the JSON file in your theme\'s <code>/%1$s/{component_name}/%2$s</code> directory.', 'acf-component-manager' ),
 						'components',
 						'assets'
 					);
@@ -64,19 +64,19 @@ class ComponentForm extends FormBase {
 							</label>
 						</th>
 						<?php
-							if ( isset( $component_properties['files'] ) ) {
-								if ( count( $component_properties['files'] ) > 1 ) {
-									?>
+						if ( isset( $component_properties['files'] ) ) {
+							if ( count( $component_properties['files'] ) > 1 ) {
+								?>
 									<td colspan="3">
-										<?php
-										_e( "There can be only one ACF JSON file per component, ", 'acf-component-manager' );
+									<?php
+										_e( 'There can be only one ACF JSON file per component, ', 'acf-component-manager' );
 										print count( $component_properties['files'] );
 										_e( ' files found.', 'acf-component-manager' );
-										?>
-									</td>
-									<?php
-								} elseif ( count( $component_properties['files'] ) == 1 ) {
 									?>
+									</td>
+								<?php
+							} elseif ( count( $component_properties['files'] ) == 1 ) {
+								?>
 									<td>
 										<input
 											type="hidden"
@@ -107,21 +107,21 @@ class ComponentForm extends FormBase {
 										</label>
 									</td>
 								<?php
-								} else {
-									?>
+							} else {
+								?>
 									<td colspan="3">
 									<?php print __( 'No files found.  Export the ACF component and place in the active theme.', 'acf-component-manager' ); ?>
 									</td>
 
-									<?php
-								}
-							} else {
-								?>
+								<?php
+							}
+						} else {
+							?>
 								<td colspan="3">
 									<?php print __( 'No files found.  Export the ACF component and place in the active theme.', 'acf-component-manager' ); ?>
 								</td>
-								<?php
-							}
+							<?php
+						}
 						?>
 					</tr>
 				<?php endforeach; ?>

@@ -165,7 +165,6 @@ class AcfComponentManager {
 
 		$options = array();
 		return $options;
-
 	}
 
 	/**
@@ -177,7 +176,7 @@ class AcfComponentManager {
 	private function define_admin_hooks() {
 
 		$plugin_admin = $this->admin;
-		$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 
@@ -194,7 +193,7 @@ class AcfComponentManager {
 
 		$dashboard_manager = $this->dashboardManager;
 		$this->loader->add_filter( 'acf_component_manager_render_page_dashboard', $dashboard_manager, 'render_page' );
-		$this->loader->add_filter(  'acf_component_manager_tabs', $dashboard_manager, 'add_menu_tab', 5 );
+		$this->loader->add_filter( 'acf_component_manager_tabs', $dashboard_manager, 'add_menu_tab', 5 );
 
 		$tools_manager = $this->toolsManager;
 		$this->loader->add_action( 'acf_component_manager_render_page_tools', $tools_manager, 'render_page', 10, 2 );
@@ -209,8 +208,6 @@ class AcfComponentManager {
 		$notice_manager = $this->noticeManager;
 		$this->loader->add_action( 'admin_init', $notice_manager, 'dismiss_notice' );
 		$this->loader->add_action( 'admin_notices', $notice_manager, 'show_notices' );
-
-
 	}
 
 	/**

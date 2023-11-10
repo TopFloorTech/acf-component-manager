@@ -55,13 +55,11 @@ class NoticeManager {
 				<?php
 				$output = ob_get_clean();
 
-				if ( $notice['scope'] == $pagenow ) {
+				if ( $pagenow == $notice['scope'] ) {
+					print $output;
+				} elseif ( 'global' == $notice['scope'] ) {
 					print $output;
 				}
-				elseif ( $notice['scope'] == 'global' ) {
-					print $output;
-				}
-
 			}
 		}
 	}
@@ -71,8 +69,8 @@ class NoticeManager {
 	 *
 	 * @param string $message The message.
 	 * @param string $type  One of 'info', 'warning', 'error', 'success'.
-	 * @param bool $dismissible Dismissible or not.
-	 * @param array $scope Defines where to display the message.
+	 * @param bool   $dismissible Dismissible or not.
+	 * @param string $scope Defines where to display the message.
 	 *
 	 * @since 0.0.1
 	 */

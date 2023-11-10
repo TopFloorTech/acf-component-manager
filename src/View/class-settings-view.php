@@ -65,7 +65,6 @@ class SettingsView extends ViewBase {
 		</table>
 
 		<?php
-
 	}
 
 	/**

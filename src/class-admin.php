@@ -195,9 +195,7 @@ class Admin {
 	 * @since 2.0.0
 	 * @param string $type The component type to delete.
 	 */
-	public function delete( $type ) {
-
-	}
+	public function delete( $type ) {}
 
 	/**
 	 * Register admin menu.
@@ -212,7 +210,7 @@ class Admin {
 			'acf-component-manager',
 			array( $this, 'create_admin_interface' )
 		);
-		add_action( "load-{$options_page}", [ $this, 'router' ] );
+		add_action( "load-{$options_page}", array( $this, 'router' ) );
 	}
 
 	/**
@@ -235,7 +233,6 @@ class Admin {
 			wp_redirect( admin_url( 'admin.php?page=' . $this->slug . $this->queryString ) );
 			exit;
 		}
-
 	}
 
 	/**
@@ -254,12 +251,16 @@ class Admin {
 	 * Action Links callback.
 	 *
 	 * @since 0.0.1
+	 *
+	 * @param array $links  The array of links.
 	 */
 	public function action_links( $links ) {
-		return array_merge( [
-			'settings' => '<a href="' . admin_url( 'options-general.php?page=acf-component-manager' ) . '">' . __( 'Settings', 'rate-cal' ) . '</a>',
-		],
-			$links );
+		return array_merge(
+			array(
+			  'settings' => '<a href="' . admin_url( 'options-general.php?page=acf-component-manager' ) . '">' . __( 'Settings', 'rate-cal' ) . '</a>',
+		  ),
+			$links
+		);
 	}
 
 	/**
@@ -279,9 +280,9 @@ class Admin {
 	 * Fires when update_option() is complete.
 	 *
 	 * @since 0.0.1
-	 * @param mixed $old_value     The value before update.
-	 * @param mixed $new_value     The new value.
-	 * @param string $option_name  The option to be updated.
+	 * @param mixed  $old_value     The value before update.
+	 * @param mixed  $new_value     The new value.
+	 * @param string $option_name   The option to be updated.
 	 */
 	public function option_manager( $old_value, $new_value, $option_name ) {
 		$settings = $this->get_settings();

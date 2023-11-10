@@ -49,7 +49,7 @@ class SettingsManager {
 	 * @retun array
 	 *   The tabs.
 	 */
-	public function add_menu_tab( array $tabs ) : array {
+	public function add_menu_tab( array $tabs ): array {
 		$tabs['manage_settings'] = __( 'Manage settings', 'acf-component-manager' );
 		return $tabs;
 	}

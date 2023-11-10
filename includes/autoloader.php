@@ -12,7 +12,7 @@ spl_autoload_register( 'acf_component_manager_autoloader' );
 /**
  * Auto load function.
  *
- * @param $class The class to load.
+ * @param string $class The class to load.
  *
  * @return void
  */

@@ -1,11 +1,5 @@
 <?php
-/**
- * Components export form class.
- *
- * @package acf-component-manager
- *
- * @since 0.0.1
- */
+
 namespace AcfComponentManager\Form;
 
 // If called directly, short.

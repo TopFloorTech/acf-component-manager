@@ -26,7 +26,6 @@ class Deactivator {
 	 */
 	public static function deactivate() {
 		self::delete_settings();
-
 	}
 
 	/**
@@ -40,5 +39,4 @@ class Deactivator {
 		delete_option( STORED_COMPONENTS_OPTION_NAME );
 		delete_option( NOTICES_OPTION_NAME );
 	}
-
 }

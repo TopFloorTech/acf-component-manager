@@ -82,9 +82,10 @@ class ComponentManager {
 				if ( ! empty( $theme_components ) ) {
 
 					// filters for performance.
-					$mew_components = array_filter( $theme_components, function( $theme_component ) use ( $stored_components ) {
+					$mew_components = array_filter( $theme_components, function ( $theme_component ) use ( $stored_components ) {
 						return ! in_array( $theme_component['hash'], array_column( $stored_components, 'hash' ) );
-					});
+					}
+					);
 				}
 				$missing_components = $this->get_missing_components( $this->get_stored_components() );
 
@@ -154,7 +155,7 @@ class ComponentManager {
 		$theme_components = $this->get_theme_components();
 		$save_components = array();
 		if ( ! empty( $theme_components ) ) {
-			foreach ($theme_components as $component_properties ) {
+			foreach ( $theme_components as $component_properties ) {
 				$hash = $component_properties['hash'];
 				if ( ! isset( $form_data['file'][ $hash ] ) || ! isset( $form_data['key'][ $hash ] ) ) {
 					continue;
@@ -224,9 +225,10 @@ class ComponentManager {
 			return $database_components;
 		}
 
-		return array_filter ( $database_components, function( $item ) use ( $managed_components ) {
+		return array_filter ( $database_components, function ( $item ) use ( $managed_components ) {
 			return ! in_array( $item['key'], array_column( $managed_components, 'key' ) );
-		} );
+		}
+		);
 	}
 
 	/**
@@ -296,8 +298,10 @@ class ComponentManager {
 			if ( $loaded_file ) {
 
 				$json = json_decode( $loaded_file, true );
+
 				// Synced theme components have a different structure.
-				if ( ! $key = $this->get_key_from_json( $json ) ) {
+				$key = $this->get_key_from_json( $json );
+				if ( ! $key ) {
 					$key = $this->get_key_from_json( reset( $json ) );
 				}
 
@@ -426,7 +430,7 @@ class ComponentManager {
 		$components = $this->get_stored_components();
 		$settings = $this->get_settings();
 
-		if ( isset( $settings['dev_mode'] ) && $settings['dev_mode'] != true ) {
+		if ( isset( $settings['dev_mode'] ) && true !== $settings['dev_mode'] ) {
 			return;
 		}
 
@@ -459,7 +463,7 @@ class ComponentManager {
 				}
 			}
 		}
- 	}
+	}
 
 	/**
 	 * Get post by key.
@@ -581,7 +585,8 @@ class ComponentManager {
 						$definition = json_decode( $file, true );
 
 						// Synced theme components have a different structure.
-						if ( ! $key = $this->get_key_from_json( $definition ) ) {
+						$key = $this->get_key_from_json( $definition );
+						if ( ! $key ) {
 							$key = $this->get_key_from_json( reset( $definition ) );
 						}
 						if ( $key && $key == $post_name ) {
@@ -623,7 +628,7 @@ class ComponentManager {
 	 *
 	 * @since 0.0.1
 	 * @param string $filename  The ACF file name.
-	 * @param mixed $post       The ACF post.
+	 * @param mixed  $post      The ACF post.
 	 * @param string $load_path The ACF load path.
 	 *
 	 * @return string
@@ -655,7 +660,8 @@ class ComponentManager {
 					$definition = json_decode( $file, true );
 
 					// Synced theme components have a different structure.
-					if ( ! $key = $this->get_key_from_json( $definition ) ) {
+					$key = $this->get_key_from_json( $definition );
+					if ( ! $key ) {
 						$key = $this->get_key_from_json( reset( $definition ) );
 					}
 					if ( $key && $key == $post_name ) {

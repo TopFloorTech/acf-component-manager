@@ -30,11 +30,12 @@ class ComponentView extends ViewBase {
 
 		if ( empty( $managed_components ) && empty( $unmanaged_components ) ) {
 			print '<p>' . __( 'No theme components found.', 'acf-component-manager' ) . '</p>';
-		}
-		else {
+		} else {
 			$this->update_action( 'edit' );
 			?>
-			<a href="<?php print $this->get_form_url(); ?>" class="button"><?php print __( 'Edit components', 'acf-component-manager' ); ?></a>
+			<a href="<?php print $this->get_form_url(); ?>" class="button">
+				<?php print __( 'Edit components', 'acf-component-manager' ); ?>
+			</a>
 			<?php
 		}
 
@@ -62,7 +63,7 @@ class ComponentView extends ViewBase {
 			<?php foreach ( $managed_components as $component ) : ?>
 				<tr>
 					<td class="row-title">
-						<?php print  $component['name']; ?>
+						<?php print $component['name']; ?>
 					</td>
 					<td>
 						<?php print $component['file']; ?>
@@ -155,8 +156,7 @@ class ComponentView extends ViewBase {
 	 * Dashboard.
 	 *
 	 * @since 0.0.1
-	 * @param array $enabled_components
-	 *   The components that are currently enabled.
+	 * @param array $enabled_components The components that are currently enabled.
 	 */
 	public function dashboard( array $enabled_components ) {
 		if ( empty( $enabled_components ) ) {
@@ -183,23 +183,23 @@ class ComponentView extends ViewBase {
 						<tr>
 							<td class="row-title">
 								<?php if ( isset( $component['name'] ) ) : ?>
-								<?php print  $component['name']; ?>
+									<?php print $component['name']; ?>
 								<?php endif; ?>
 							</td>
 							<td>
 								<?php if ( isset( $component['file'] ) ) : ?>
-								<?php print $component['file']; ?>
+									<?php print $component['file']; ?>
 								<?php endif; ?>
 							</td>
 							<td>
 								<?php if ( isset( $component['enabled'] ) ) : ?>
-								<?php
-								if ( $component['enabled'] ) {
-									print 'Yes';
-								} else {
-									print 'No';
-								}
-								?>
+									<?php
+									if ( $component['enabled'] ) {
+										print 'Yes';
+									} else {
+										print 'No';
+									}
+									?>
 								<?php endif; ?>
 							</td>
 						</tr>

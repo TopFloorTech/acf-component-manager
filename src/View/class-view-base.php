@@ -68,7 +68,7 @@ class ViewBase {
 		if ( $query_parts ) {
 			foreach ( $query_parts as $key => $query_part ) {
 				if ( strpos( $query_part, 'action=' ) !== false ) {
-					$query_parts[$key] = 'action=' . $action;
+					$query_parts[ $key ] = 'action=' . $action;
 				}
 			}
 		}

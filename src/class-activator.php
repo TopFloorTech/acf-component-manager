@@ -19,7 +19,6 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class Activator {
 
-
 	/**
 	 * Activation options.
 	 *
@@ -27,7 +26,7 @@ class Activator {
 	 * @access protected
 	 * @var array $activation_options
 	 */
-	static protected $activation_options;
+	protected static $activation_options;
 
 	/**
 	 * Is activated.
@@ -36,7 +35,7 @@ class Activator {
 	 * @access protected
 	 * @var bool $is_activated
 	 */
-	static $is_activated;
+	protected static $is_activated;
 
 	/**
 	 * Min PHP version.
@@ -45,7 +44,7 @@ class Activator {
 	 * @access protected
 	 * @var string $min_php_version
 	 */
-	static protected $min_php_version;
+	protected static $min_php_version;
 
 	/**
 	 * Min WordPress version.
@@ -54,7 +53,7 @@ class Activator {
 	 * @access protected
 	 * @var string $min_wordpress_version
 	 */
-	static protected $min_wordpress_version;
+	protected static $min_wordpress_version;
 
 	/**
 	 * Activates Plugin
@@ -69,12 +68,11 @@ class Activator {
 		self::$min_wordpress_version = ACF_COMPONENT_MANAGER_MIN_WP_VERSION;
 
 		$requirements = self::check_requirements();
-		if ( !$requirements ) {
+		if ( ! $requirements ) {
 			die( __( 'ACF Component Manager not activated!  Your site does not meet the minimum requirements. Minimum Requirements: PHP Version: ' . self::$min_php_version . ', WordPress Version: ' . self::$min_wordpress_version, 'acf-component-manager' ) );
 		}
 
 		$setUp = self::set_up();
-
 	}
 
 	/**
@@ -82,10 +80,9 @@ class Activator {
 	 *
 	 * @since 0.0.1
 	 */
-	static private function is_activated() {
+	private static function is_activated() {
 
 		return is_plugin_active( 'acf-component-manager' );
-
 	}
 
 	/**
@@ -96,7 +93,7 @@ class Activator {
 	 *
 	 * @return bool
 	 */
-	static private function set_up() {
+	private static function set_up() {
 		$dev_mode = false;
 		if ( wp_get_environment_type() == 'development' ) {
 			$dev_mode = true;
@@ -119,13 +116,13 @@ class Activator {
 	 *
 	 * @return bool
 	 */
-	static private function check_requirements() {
+	private static function check_requirements() {
 		$php = self::check_php_version();
-		if ( !$php ) {
+		if ( ! $php ) {
 			return false;
 		}
 		$wordpress = self::check_wordpress_version();
-		if ( !$wordpress ) {
+		if ( ! $wordpress ) {
 			return false;
 		}
 		return true;
@@ -140,7 +137,7 @@ class Activator {
 	 *
 	 * @return bool
 	 */
-	static private function check_wordpress_version() {
+	private static function check_wordpress_version() {
 		global $wp_version;
 		if ( $wp_version < self::$min_wordpress_version ) {
 			return false;
@@ -156,7 +153,7 @@ class Activator {
 	 *
 	 * @return bool
 	 */
-	static private function check_php_version() {
+	private static function check_php_version() {
 		$current_version = phpversion();
 		return version_compare( $current_version, self::$min_php_version, '>=' );
 	}
