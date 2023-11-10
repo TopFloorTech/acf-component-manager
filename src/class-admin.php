@@ -257,8 +257,8 @@ class Admin {
 	public function action_links( $links ) {
 		return array_merge(
 			array(
-			  'settings' => '<a href="' . admin_url( 'options-general.php?page=acf-component-manager' ) . '">' . __( 'Settings', 'rate-cal' ) . '</a>',
-		  ),
+				'settings' => '<a href="' . admin_url( 'options-general.php?page=acf-component-manager' ) . '">' . __( 'Settings', 'rate-cal' ) . '</a>',
+			),
 			$links
 		);
 	}

@@ -82,9 +82,11 @@ class ComponentManager {
 				if ( ! empty( $theme_components ) ) {
 
 					// filters for performance.
-					$mew_components = array_filter( $theme_components, function ( $theme_component ) use ( $stored_components ) {
-						return ! in_array( $theme_component['hash'], array_column( $stored_components, 'hash' ) );
-					}
+					$mew_components = array_filter(
+						$theme_components,
+						function ( $theme_component ) use ( $stored_components ) {
+							return ! in_array( $theme_component['hash'], array_column( $stored_components, 'hash' ) );
+						}
 					);
 				}
 				$missing_components = $this->get_missing_components( $this->get_stored_components() );
@@ -225,9 +227,11 @@ class ComponentManager {
 			return $database_components;
 		}
 
-		return array_filter ( $database_components, function ( $item ) use ( $managed_components ) {
-			return ! in_array( $item['key'], array_column( $managed_components, 'key' ) );
-		}
+		return array_filter(
+			$database_components,
+			function ( $item ) use ( $managed_components ) {
+				return ! in_array( $item['key'], array_column( $managed_components, 'key' ) );
+			}
 		);
 	}
 

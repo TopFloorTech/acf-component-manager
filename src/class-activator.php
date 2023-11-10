@@ -79,6 +79,8 @@ class Activator {
 	 * Check if plugin is activated.
 	 *
 	 * @since 0.0.1
+	 *
+	 * @return bool Whether the plugin is active.
 	 */
 	private static function is_activated() {
 

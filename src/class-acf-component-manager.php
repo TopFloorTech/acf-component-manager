@@ -123,8 +123,7 @@ class AcfComponentManager {
 	public function __construct() {
 		if ( defined( 'ACF_COMPONENT_MANAGER_VERSION' ) ) {
 			$this->version = ACF_COMPONENT_MANAGER_VERSION;
-		}
-		else {
+		} else {
 			$this->version = '0.0.1';
 		}
 
