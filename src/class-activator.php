@@ -93,7 +93,7 @@ class Activator {
 	 * @since 0.0.1
 	 * @access private
 	 *
-	 * @return bool
+	 * @return void
 	 */
 	private static function set_up() {
 		$dev_mode = false;
