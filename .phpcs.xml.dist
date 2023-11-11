@@ -81,7 +81,7 @@
 		<exclude-pattern>/WordPress/Sniffs/NamingConventions/ValidHookNameSniff\.php$</exclude-pattern>
 		<exclude-pattern>/WordPress/Sniffs/Security/(EscapeOutput|NonceVerification|ValidatedSanitizedInput)Sniff\.php$</exclude-pattern>
 
-		<exclude name="Universal.Class.RequireFinalClass.NonFinalClassFound" />
+		<exclude name="Universal.Classes.RequireFinalClass.NonFinalClassFound" />
 	</rule>
 
 	<!-- Enforce that methods in traits are always final. -->
