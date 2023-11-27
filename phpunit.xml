@@ -12,9 +12,9 @@
 		</testsuite>
 	</testsuites>
 
-	<filter>
-		<whitelist processUncoveredFilesFromWhitelist="true">
+	<coverage processUncoveredFiles="true">
+		<include>
 			<directory suffix=".php">./</directory>
-		</whitelist>
-	</filter>
+		</include>
+	</coverage>
 </phpunit>
