@@ -119,6 +119,9 @@ class SettingsManager {
 		}
 		$settings['dev_mode'] = $dev_mode;
 
+		// Force resaving active_theme_directory.
+		$settings['active_theme_directory'] = get_stylesheet_directory();
+
 		$components_directory = '';
 		if ( isset( $form_data['components_directory'] ) ) {
 			$components_directory = sanitize_text_field( $form_data['components_directory'] );

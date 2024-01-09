@@ -78,11 +78,11 @@ class ComponentManager {
 				$view = new ComponentView( $form_url );
 				$theme_components = $this->get_theme_components();
 				$stored_components = $this->get_stored_components();
-				$mew_components = array();
+				$new_components = array();
 				if ( ! empty( $theme_components ) ) {
 
 					// filters for performance.
-					$mew_components = array_filter(
+					$new_components = array_filter(
 						$theme_components,
 						function ( $theme_component ) use ( $stored_components ) {
 							return ! in_array( $theme_component['hash'], array_column( $stored_components, 'hash' ) );
@@ -91,7 +91,7 @@ class ComponentManager {
 				}
 				$missing_components = $this->get_missing_components( $this->get_stored_components() );
 
-				$view->view( $stored_components, $mew_components, $missing_components );
+				$view->view( $stored_components, $new_components, $missing_components );
 				break;
 
 			case 'edit':
