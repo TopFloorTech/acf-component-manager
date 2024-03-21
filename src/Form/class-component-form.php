@@ -46,10 +46,10 @@ class ComponentForm extends FormBase {
 			</div>
 
 			<?php if ( ! empty( $components ) ) : ?>
-			<table class="form-table">
+			<table class="form-table wp-list-table widefat striped">
 				<thead>
 				<tr>
-					<th><?php print __( 'Component', 'acf-component-manager' ); ?></th>
+					<th style="padding-left:10px;"><?php print __( 'Component', 'acf-component-manager' ); ?></th>
 					<th><?php print __( 'File name', 'acf-component-manager' ); ?></th>
 					<th><?php print __( 'Key', 'acf-component-manager' ); ?></th>
 					<th><?php print __( 'Enabled', 'acf-component-manager' ); ?></th>
@@ -58,7 +58,7 @@ class ComponentForm extends FormBase {
 				<tbody>
 				<?php foreach ( $components as $component => $component_properties ) : ?>
 					<tr class="form-field form-required">
-						<th class="row row-title">
+						<th class="row row-title" style="padding-left:10px">
 							<label for="<?php print $component_properties['hash']; ?>">
 								<?php print $component_properties['name']; ?>
 							</label>

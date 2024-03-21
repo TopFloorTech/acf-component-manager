@@ -43,7 +43,7 @@ class SettingsForm extends FormBase {
 						<label for="dev_mode">
 							<?php print __( 'Enabled', 'acf-component-manager' ); ?>
 						</label>
-						<p class="helper"><em><?php print __( 'Dev mode prevents ACF from saving components.', 'acf-component-manager' ); ?></em></p>
+						<p class="helper"><em><?php print __( 'Dev mode enables ACF admin and saving components.', 'acf-component-manager' ); ?></em></p>
 					</td>
 				</tr>
 
