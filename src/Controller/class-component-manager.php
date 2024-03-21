@@ -707,5 +707,4 @@ class ComponentManager {
 		}
 		return false;
 	}
-
 }
