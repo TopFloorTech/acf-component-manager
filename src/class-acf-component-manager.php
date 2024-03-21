@@ -189,6 +189,7 @@ class AcfComponentManager {
 		$this->loader->add_filter( 'acf/json/save_file_name', $component_manager, 'filter_save_filename', 10, 3 );
 		$this->loader->add_filter( 'acf/json/save_paths', $component_manager, 'filter_save_paths', 10, 2 );
 		$this->loader->add_filter( 'acf/settings/load_json', $component_manager, 'filter_load_paths', 10, 1 );
+		$this->loader->add_filter( 'acf/settings/show_admin', $component_manager, 'is_dev_mode' );
 
 		$dashboard_manager = $this->dashboardManager;
 		$this->loader->add_filter( 'acf_component_manager_render_page_dashboard', $dashboard_manager, 'render_page' );

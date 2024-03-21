@@ -269,7 +269,7 @@ class ComponentManager {
 				$components[] = array(
 					'name' => $component['Component'],
 					'path' => $component_path,
-					'hash' => wp_hash( $component_path ),
+					'hash' => wp_hash( $component_path, '' ),
 				);
 			}
 		}
@@ -434,7 +434,7 @@ class ComponentManager {
 		$components = $this->get_stored_components();
 		$settings = $this->get_settings();
 
-		if ( isset( $settings['dev_mode'] ) && true !== $settings['dev_mode'] ) {
+		if ( ! $this->is_dev_mode() ) {
 			return;
 		}
 
@@ -567,7 +567,6 @@ class ComponentManager {
 	 * @see acf/json/save_paths
 	 */
 	public function filter_save_paths( array $paths, $post ) {
-		$settings = $this->get_settings();
 
 		$acf_post = get_post( $post['ID'] );
 		if ( ! $acf_post ) {
@@ -578,7 +577,7 @@ class ComponentManager {
 		if ( 'acf-field-group' !== $post_type ) {
 			return $paths;
 		}
-		if ( isset( $settings['dev_mode'] ) && $settings['dev_mode'] ) {
+		if ( $this->is_dev_mode() ) {
 			$enabled_components = $this->get_enabled_components();
 			if ( ! empty( $enabled_components ) ) {
 				foreach ( $enabled_components as $hash => $component ) {
@@ -691,6 +690,20 @@ class ComponentManager {
 		$settings = $this->get_settings();
 		if ( isset( $settings['active_theme_directory'] ) ) {
 			return sprintf( $this->file_pattern, $settings['active_theme_directory'], $settings['components_directory'], $component_path, $settings['file_directory'] );
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if dev mode is enabled.
+	 *
+	 * @return bool
+	 *   True if we are in dev_mode.
+	 */
+	public function is_dev_mode() {
+		$settings = $this->get_settings();
+		if ( isset( $settings['dev_mode'] ) && $settings['dev_mode'] ) {
+			return true;
 		}
 		return false;
 	}
