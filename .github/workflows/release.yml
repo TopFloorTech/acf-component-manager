@@ -37,8 +37,8 @@ on:
             name: acf-component-manager
             path: build/acf-component-manager.zip
         - name: Upload to release
-            uses: JasonEtco/upload-to-release@master
-            with:
-              args: build/acf-component-manager.zip application/zip
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          uses: JasonEtco/upload-to-release@master
+          with:
+            args: build/acf-component-manager.zip application/zip
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
