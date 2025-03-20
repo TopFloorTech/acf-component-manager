@@ -48,7 +48,7 @@ jobs:
           phpunit --version
 
       - name: Cache composer packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
@@ -85,7 +85,7 @@ jobs:
         run: php -v
 
       - name: Cache composer packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
