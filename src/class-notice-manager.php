@@ -101,7 +101,10 @@ class NoticeManager {
 	 * @since 0.0.1
 	 */
 	public function dismiss_notice() {
-		$dismiss_notice = filter_input( INPUT_GET, 'acf-component-manager-notice-dismiss', FILTER_SANITIZE_STRING );
+		if ( ! isset( $_GET['acf-component-manager-notice-dismiss'] ) ) {
+			return;
+		}
+		$dismiss_notice = htmlspecialchars( $_GET['acf-component-manager-notice'] );
 		$notices = $this->get_notices();
 		if ( isset( $notices[ $dismiss_notice ] ) ) {
 			unset( $notices[ $dismiss_notice ] );
