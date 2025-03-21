@@ -222,7 +222,7 @@ class ComponentManager {
 	 */
 	public function get_missing_components( array $managed_components ) {
 
-		$database_components = $this->get_acf_field_groups();
+		$database_components = $this->get_acf_posts();
 		if ( empty( $managed_components ) ) {
 			return $database_components;
 		}
@@ -397,6 +397,24 @@ class ComponentManager {
 	}
 
 	/**
+	 * Get ACF posts.
+	 *
+	 * Aggregates all ACF posts.
+	 *
+	 * @since 0.0.4
+	 *
+	 * @return array
+	 *   An array of ACF post (field groups, post types, taxonomies, option page)
+	 */
+	public function get_acf_posts(): array {
+		$acf_field_groups = $this->get_acf_field_groups();
+		$acf_post_types = $this->get_acf_post_types();
+		$acf_taxonomies = $this->get_acf_taxonomies();
+		$acf_option_pages = $this->get_acf_option_pages();
+		return array_merge( $acf_field_groups, $acf_post_types, $acf_taxonomies, $acf_option_pages );
+	}
+
+	/**
 	 * Get ACF field groups.
 	 *
 	 * @since 0.0.1
@@ -423,6 +441,93 @@ class ComponentManager {
 			}
 		}
 		return $acf_field_groups;
+	}
+
+	/**
+	 * Get ACF post types.
+	 *
+	 * @since 0.0.4
+	 *
+	 * @return array
+	 *   An array of ACF post types.
+	 */
+	public function get_acf_post_types(): array {
+		$acf_post_types = array();
+		$args = array(
+			'post_type' => 'acf-post-type',
+			'posts_per_page' => -1,
+		);
+		$post_type_query = new \WP_Query( $args );
+		if ( $post_type_query->have_posts() ) {
+			$acf_post_type_posts = $post_type_query->get_posts();
+			foreach ( $acf_post_type_posts as $acf_post_type ) {
+				$acf_post_types[] = array(
+					'id' => $acf_post_type->ID,
+					'key' => $acf_post_type->post_name,
+					'status' => $acf_post_type->post_status,
+					'name' => $acf_post_type->post_title,
+				);
+			}
+		}
+		return $acf_post_types;
+	}
+
+	/**
+	 * Get ACF taxonomies.
+	 *
+	 * @since 0.0.4
+	 *
+	 * @return array
+	 *   An array of ACF taxonomies.
+	 */
+	public function get_acf_taxonomies(): array {
+		$acf_taxonomies = array();
+		$args = array(
+			'post_type' => 'acf-taxonomy',
+			'posts_per_page' => -1,
+		);
+		$taxonomy_query = new \WP_Query( $args );
+		if ( $taxonomy_query->have_posts() ) {
+			$acf_taxonomy_posts = $taxonomy_query->get_posts();
+			foreach ( $acf_taxonomy_posts as $acf_taxonomy ) {
+				$acf_taxonomies[] = array(
+					'id' => $acf_taxonomy->ID,
+					'key' => $acf_taxonomy->post_name,
+					'status' => $acf_taxonomy->post_status,
+					'name' => $acf_taxonomy->post_title,
+				);
+			}
+		}
+		return $acf_taxonomies;
+	}
+
+	/**
+	 * Get ACF option pages.
+	 *
+	 * @since 0.0.4
+	 *
+	 * @return array
+	 *   An array of ACF option pages.
+	 */
+	public function get_acf_option_pages(): array {
+		$acf_option_pages = array();
+		$args = array(
+			'post_type' => 'acf-ui-options-page',
+			'posts_per_page' => -1,
+		);
+		$option_page_query = new \WP_Query( $args );
+		if ( $option_page_query->have_posts() ) {
+			$acf_option_page_posts = $option_page_query->get_posts();
+			foreach ( $acf_option_page_posts as $acf_option_page ) {
+				$acf_option_pages[] = array(
+					'id' => $acf_option_page->ID,
+					'key' => $acf_option_page->post_name,
+					'status' => $acf_option_page->post_status,
+					'name' => $acf_option_page->post_title,
+				);
+			}
+		}
+		return $acf_option_pages;
 	}
 
 	/**
@@ -574,9 +679,11 @@ class ComponentManager {
 		}
 		$post_name = $acf_post->post_name;
 		$post_type = $acf_post->post_type;
-		if ( 'acf-field-group' !== $post_type ) {
+
+		if ( ! in_array( $post_type, array( 'acf-field-group', 'acf-taxonomy', 'acf-post-type', 'acf-ui-options-page' ), true ) ) {
 			return $paths;
 		}
+
 		if ( $this->is_dev_mode() ) {
 			$enabled_components = $this->get_enabled_components();
 			if ( ! empty( $enabled_components ) ) {

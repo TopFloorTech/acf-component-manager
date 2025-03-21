@@ -7,7 +7,7 @@
  * @wordpress-plugin
  * Plugin Name: ACF Component Manager
  * Description: Manages ACF based components.
- * Version: 0.0.1
+ * Version: 0.0.4
  * Author: Scott Sawyer
  * Text Domain: acf-component-manager
  */
@@ -19,7 +19,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Plugin version.
  */
-define( 'ACF_COMPONENT_MANAGER_VERSION', '0.0.1' );
+define( 'ACF_COMPONENT_MANAGER_VERSION', '0.0.4' );
 
 /**
  * Minimum WordPress version.
