@@ -226,9 +226,7 @@ class ComponentManager {
 		if ( empty( $managed_components ) ) {
 			return $database_components;
 		}
-		print '<pre>';
-print_r($database_components);
-print '</pre>';
+
 		return array_filter(
 			$database_components,
 			function ( $item ) use ( $managed_components ) {
