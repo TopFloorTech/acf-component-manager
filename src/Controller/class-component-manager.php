@@ -755,7 +755,13 @@ class ComponentManager {
 		}
 		$post_name = $acf_post->post_name;
 		$post_type = $acf_post->post_type;
-		if ( 'acf-field-group' !== $post_type ) {
+		$acf_post_types = array(
+			'acf-field-group',
+			'acf-post-type',
+			'acf-taxonomy',
+			'acf-ui-options-page',
+		);
+		if ( ! in_array( $post_type, $acf_post_types ) ) {
 			return $filename;
 		}
 
