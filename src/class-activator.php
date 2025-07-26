@@ -130,7 +130,6 @@ class Activator {
 		return true;
 	}
 
-
 	/**
 	 * Check min WordPress version.
 	 *

@@ -58,11 +58,11 @@ class SettingsManager {
 	 * Get Settings.
 	 *
 	 * @since 0.0.1
-	 * @access private
+	 * @access public
 	 *
 	 * @return array $settings
 	 */
-	private function get_settings() {
+	public function get_settings() {
 		$settings = array();
 		$stored_settings = get_option( SETTINGS_OPTION_NAME );
 		if ( $stored_settings ) {
