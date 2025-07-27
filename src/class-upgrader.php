@@ -44,7 +44,16 @@ class Upgrader {
 	 *
 	 * @var \AcfComponentManager\Controller\SettingsManager
 	 */
-	protected $setttingsManager;
+	protected $settingsManager;
+
+	/**
+	 * Array of upgrade versions and functions.
+	 *
+	 * @var array
+	 */
+	protected $upgrade_versions = array(
+		'0.0.7' => 'upgrade_007',
+	);
 
 	/**
 	 * Constructs a new Upgrader object.
@@ -85,8 +94,59 @@ class Upgrader {
 			foreach( $options['plugins'] as $plugin ) {
 				if( $plugin == $our_plugin ) {
 					// Set a transient to record that our plugin has just been updated
-					set_transient( 'wp_upe_updated', 1 );
+					set_transient( 'acf_updated', 1 );
 				}
+			}
+		}
+	}
+
+	/**
+	 * Check upgrades.
+	 *
+	 * @since 0.0.7
+	 *
+	 * @return array An array of upgrades.
+	 */
+	public function get_upgrades(): array {
+		$settings = $this->settingsManager->get_settings();
+		$available_upgrades = array();
+		if ( isset( $settings['version'] ) && $settings['version'] > ACF_COMPONENT_MANAGER_VERSION ) {
+			foreach ( $this->upgrade_versions as $version => $callback ) {
+				if ( version_compare( $version, $settings['version'], '<' ) ) {
+					$available_upgrades[$version] = $callback;
+				}
+			}
+		}
+		return $available_upgrades;
+	}
+
+	/**
+	 * Run available upgrades.
+	 *
+	 * @since 0.0.7
+	 * @param array $available_upgrades
+	 */
+	public function run_upgrades( array $available_upgrades ) {
+		$fails = array();
+		$successes = array();
+		foreach ( $available_upgrades as $version => $callback ) {
+			$success = call_user_func( $callback );
+			if ( ! $success ) {
+				$fails[] = $version;
+			}
+			else {
+				$successes[] = $version;
+			}
+		}
+		if ( ! empty( $fails ) ) {
+			foreach ( $fails as $fail ) {
+				$this->noticeManager::add_notice( 'Upgrade failed. ' . $fail, 'error' );
+			}
+		}
+		if ( ! empty( $successes ) ) {
+			foreach ($successes as $success) {
+
+				$this->noticeManager::add_notice('Upgrade completed. ' . $success, 'success');
 			}
 		}
 	}
@@ -95,58 +155,53 @@ class Upgrader {
 	 * Upgrade 007.
 	 *
 	 * @since 0.0.7
-	 * @param array $settings
 	 *
-	 * @return array The upgraded options.
+	 * @return bool If successful.
 	 */
-	public function upgrade_007( array $settings ) {
-		if ( isset( $settings['version'] ) && $settings['version'] > ACF_COMPONENT_MANAGER_VERSION ) {
-			$parent_theme_directory = get_template_directory();
-			$child_theme_directory = get_stylesheet_directory();
-			// We want to know if we have a parent theme.
-			$parent_theme = false;
-			if ( $parent_theme_directory !== $child_theme_directory ) {
-				$parent_theme = true;
-			}
+	public function upgrade_007() {
+		$settings = $this->setttingsManager->get_settings();
+		$new_source = array();
+  	$parent_theme_directory = get_template_directory();
+		$child_theme_directory = get_stylesheet_directory();
 
-			if ( isset( $settings['active_theme_directory'] ) ) {
-					if ( $settings['active_theme_directory'] === $parent_theme_directory ) {
-						$new_source = array(
-							'source' => 'parent_theme',
-							'base_path' => $parent_theme_directory,
-							'file_directory' => $settings['file_directory'] ?? '',
-							'components_directory' => $settings['components_directory'] ?? '',
-						);
-					}
-					else {
-						$new_source = array(
-							'source' => 'child_theme',
-							'base_path' => $child_theme_directory,
-							'file_directory' => $settings['file_directory'] ?? '',
-							'components_directory' => $settings['components_directory'] ?? '',
-						);
-					}
-					if ( ! empty( $new_source ) ) {
+		if ( isset( $settings['active_theme_directory'] ) ) {
+				if ( $settings['active_theme_directory'] === $parent_theme_directory ) {
+					$new_source = array(
+						'source' => 'parent_theme',
+						'base_path' => $parent_theme_directory,
+						'file_directory' => $settings['file_directory'] ?? '',
+						'components_directory' => $settings['components_directory'] ?? '',
+					);
+				}
+				else {
+					$new_source = array(
+						'source' => 'child_theme',
+						'base_path' => $child_theme_directory,
+						'file_directory' => $settings['file_directory'] ?? '',
+						'components_directory' => $settings['components_directory'] ?? '',
+					);
+				}
+				if ( ! empty( $new_source ) ) {
 
-						// Get any stored components, add the new source key.
-						$components = $this->componentManager->get_stored_components();
+					// Get any stored components, add the new source key.
+					$components = $this->componentManager->get_stored_components();
 
-						if ( ! empty( $components ) ) {
-							foreach ( $components as $component ) {
-								$component['source'] = $new_source['source'];
-							}
-
-							$this->componentManager->set_stored_components( $components );
+					if ( ! empty( $components ) ) {
+						foreach ( $components as $component ) {
+							$component['source'] = $new_source['source'];
 						}
-						$new_settings = array(
-							'version' => ACF_COMPONENT_MANAGER_VERSION,
-							'dev_mode' => $settings['dev_mode'] ?? false,
-							'sources' => $new_source,
-						);
-						update_option( SETTINGS_OPTION_NAME, $new_settings );
 
+						$this->componentManager->set_stored_components( $components );
 					}
+
 				}
 		}
+		$new_settings = array(
+			'version' => ACF_COMPONENT_MANAGER_VERSION,
+			'dev_mode' => $settings['dev_mode'] ?? false,
+			'sources' => $new_source,
+		);
+		return update_option( SETTINGS_OPTION_NAME, $new_settings );
 	}
+
 }

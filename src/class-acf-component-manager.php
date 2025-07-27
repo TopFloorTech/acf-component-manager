@@ -19,6 +19,7 @@ use AcfComponentManager\Controller\SettingsManager;
 use AcfComponentManager\Controller\DashboardManager;
 use AcfComponentManager\Controller\ToolsManager;
 use AcfComponentManager\NoticeManager;
+use AcfComponentManager\Upgrader;
 
 /**
  * Main plugin class.
@@ -107,6 +108,13 @@ class AcfComponentManager {
 	protected $toolsManager;
 
 	/**
+	 * AcfComponentManager\Upgrader definition.
+	 *
+	 * @var \AcfComponentManager\Upgrader
+	 */
+	protected $upgrader;
+
+	/**
 	 * Options.
 	 *
 	 * @since 0.0.1
@@ -133,6 +141,9 @@ class AcfComponentManager {
 
 		$this->load_dependencies();
 		$this->define_admin_hooks();
+
+		// Check for updates.
+		$this->check_updates();
 	}
 
 	/**
@@ -150,6 +161,20 @@ class AcfComponentManager {
 		$this->dashboardManager = new DashboardManager();
 		$this->toolsManager = new ToolsManager();
 		$this->noticeManager = new NoticeManager();
+		$this->upgrader = new Upgrader();
+	}
+
+	/**
+	 * Check for updates.
+	 *
+	 * @since 0.0.7
+	 * @access protected
+	 */
+	protected function check_updates() {
+		$available_updates = $this->upgrader->get_upgrades();
+		if ( ! empty( $available_updates ) ) {
+			$this->upgrader->run_upgrades( $available_updates );
+		}
 	}
 
 	/**
