@@ -45,22 +45,6 @@ class SettingsView extends ViewBase {
 					?>
 				</td>
 			</tr>
-			<tr>
-				<td class="row-title">
-					<?php print __( 'Components directory', 'acf-component-manager' ); ?>
-				</td>
-				<td>
-					<?php print $settings['components_directory']; ?>
-				</td>
-			</tr>
-			<tr>
-				<td class="row-title">
-					<?php print __( 'File directory', 'acf-component-manager' ); ?>
-				</td>
-				<td>
-					<?php print $settings['file_directory']; ?>
-				</td>
-			</tr>
 			</tbody>
 		</table>
 

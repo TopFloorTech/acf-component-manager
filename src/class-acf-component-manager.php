@@ -15,8 +15,9 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 use AcfComponentManager\Controller\ComponentManager;
-use AcfComponentManager\Controller\SettingsManager;
 use AcfComponentManager\Controller\DashboardManager;
+use AcfComponentManager\Controller\SettingsManager;
+use AcfComponentManager\Controller\SourceManager;
 use AcfComponentManager\Controller\ToolsManager;
 use AcfComponentManager\NoticeManager;
 use AcfComponentManager\Upgrader;
@@ -85,6 +86,15 @@ class AcfComponentManager {
 	 * @since 0.0.1
 	 */
 	protected $settingsManager;
+
+  /**
+   * AcfComponentManager\Controller\SourceManager definition.
+   *
+   * @var \AcfComponentManager\Controller\SourceManager
+   *
+   * @since 0.0.7
+   */
+  protected $sourceManager;
 
 	/**
 	 * AcfComponentManager\NoticeManager definition.
@@ -158,6 +168,7 @@ class AcfComponentManager {
 		$this->loader = new Loader();
 		$this->componentManager = new ComponentManager();
 		$this->settingsManager = new SettingsManager();
+    $this->sourceManager = new SourceManager();
 		$this->dashboardManager = new DashboardManager();
 		$this->toolsManager = new ToolsManager();
 		$this->noticeManager = new NoticeManager();
@@ -229,6 +240,13 @@ class AcfComponentManager {
 		$this->loader->add_action( 'acf_component_manager_dashboard', $settings_manager, 'dashboard', 5 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_settings', $settings_manager, 'save', 10, 1 );
 		$this->loader->add_filter( 'acf_component_manager_tabs', $settings_manager, 'add_menu_tab', 10 );
+
+    $source_manager = $this->sourceManager;
+    $this->loader->add_action( 'acf_component_manager_render_page_manage_sources', $source_manager, 'render_page', 10, 2 );
+    //$this->loader->add_action( 'acf_component_manager_dashboard', $source_manager, 'dashboard', 5 );
+    $this->loader->add_filter( 'acf_component_manager_tabs', $source_manager, 'add_menu_tab', 10 );
+    $this->loader->add_action( 'acf_component_manager_save_manage_sources', $source_manager, 'save', 10, 1 );
+    $this->loader->add_action( 'acf_component_manager_delete_manage_sources', $source_manager, 'delete', 10 );
 
 		$notice_manager = $this->noticeManager;
 		$this->loader->add_action( 'admin_init', $notice_manager, 'dismiss_notice' );

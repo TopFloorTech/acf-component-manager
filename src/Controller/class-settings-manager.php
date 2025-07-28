@@ -2,7 +2,7 @@
 /**
  * Contains the SettingsManager class.
  *
- * @package 0.0.1
+ * @since 0.0.1
  */
 
 namespace AcfComponentManager\Controller;
@@ -13,6 +13,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 use AcfComponentManager\Form\SettingsForm;
+use AcfComponentManager\Form\SourceForm;
 use AcfComponentManager\View\ComponentView;
 use AcfComponentManager\View\SettingsView;
 
@@ -92,6 +93,15 @@ class SettingsManager {
 				$form = new SettingsForm( $form_url );
 				$form->form( $this->get_settings() );
 				break;
+      case 'add-source':
+      case 'edit-source':
+        $source_id = uniqid();
+        if ( isset( $_GET['source_id'] ) ) {
+          $source_id = sanitize_text_field( $_GET['source_id'] );
+        }
+        $form = new SourceForm( $form_url );
+        $form->form( $this->get_settings(), $source_id );
+        break;
 		}
 	}
 
@@ -152,4 +162,46 @@ class SettingsManager {
 
 		update_option( SETTINGS_OPTION_NAME, $settings );
 	}
+
+  /**
+   * Source form callback function.
+   *
+   * @param array $form_data The form data submitted.
+   */
+  public function save_source( array $form_data ) {
+    $settings = $this->get_settings();
+    $source_id = null;
+    $source_data = array();
+    if ( isset( $form_data['source_id'] ) ) {
+      $source_id = sanitize_text_field( $form_data['source_id'] );
+    }
+    if ( $source_id && isset( $settings['sources'][$source_id] ) ) {
+      $source_data = $settings['sources'][$source_id];
+    }
+
+    if ( isset( $form_data['source_type'] ) ) {
+      $source_type = sanitize_text_field( $form_data['source_type'] );
+    }
+    $source_path = '';
+    switch ( $source_type ) {
+      case 'parent_theme':
+        $source_path = get_template_directory();
+        break;
+      case 'child_theme':
+        $source_path = get_stylesheet_directory();
+        break;
+      default:
+        $active_plugins = get_option( 'active_plugins' );
+        if ( is_array( $active_plugins ) && isset( $active_plugins[ $source_type ] ) ) {
+          $source_path = $active_plugins[ $source_type ];
+        }
+        break;
+    }
+
+
+  }
+
+  /**
+   * Delete source callback function.
+   */
 }
