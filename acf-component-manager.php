@@ -49,6 +49,11 @@ define( 'STORED_COMPONENTS_OPTION_NAME', 'acf_component_manager_components' );
 define( 'SETTINGS_OPTION_NAME', 'acf-component-manager-settings' );
 
 /**
+ * Sources option name.
+ */
+define( 'SOURCES_OPTION_NAME', 'acf-component-manager-sources' );
+
+/**
  * Notices option name.
  */
 define( 'NOTICES_OPTION_NAME', 'acf-component-manager-notices' );

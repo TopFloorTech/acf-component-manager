@@ -129,79 +129,7 @@ class SettingsManager {
 		}
 		$settings['dev_mode'] = $dev_mode;
 
-		// Force resaving active_theme_directory.
-		$settings['active_theme_directory'] = get_stylesheet_directory();
-
-		$components_directory = '';
-		if ( isset( $form_data['components_directory'] ) ) {
-			$components_directory = sanitize_text_field( $form_data['components_directory'] );
-			$components_directory_parts = explode( '/', $components_directory );
-			$directory_parts = array();
-			foreach ( $components_directory_parts as $part ) {
-				if ( ! empty( $part ) ) {
-					$directory_parts[] = $part;
-				}
-			}
-			$components_directory = implode( '/', $directory_parts );
-		}
-		$settings['components_directory'] = $components_directory;
-
-		$file_directory = '';
-		if ( isset( $form_data['file_directory'] ) ) {
-			$file_directory = sanitize_text_field( $form_data['file_directory'] );
-			$file_directory_parts = explode( '/', $file_directory );
-			$directory_parts = array();
-			foreach ( $file_directory_parts as $part ) {
-				if ( ! empty( $part ) ) {
-					$directory_parts[] = $part;
-				}
-			}
-			$file_directory = implode( '/', $directory_parts );
-		}
-		$settings['file_directory'] = $file_directory;
-
 		update_option( SETTINGS_OPTION_NAME, $settings );
 	}
 
-  /**
-   * Source form callback function.
-   *
-   * @param array $form_data The form data submitted.
-   */
-  public function save_source( array $form_data ) {
-    $settings = $this->get_settings();
-    $source_id = null;
-    $source_data = array();
-    if ( isset( $form_data['source_id'] ) ) {
-      $source_id = sanitize_text_field( $form_data['source_id'] );
-    }
-    if ( $source_id && isset( $settings['sources'][$source_id] ) ) {
-      $source_data = $settings['sources'][$source_id];
-    }
-
-    if ( isset( $form_data['source_type'] ) ) {
-      $source_type = sanitize_text_field( $form_data['source_type'] );
-    }
-    $source_path = '';
-    switch ( $source_type ) {
-      case 'parent_theme':
-        $source_path = get_template_directory();
-        break;
-      case 'child_theme':
-        $source_path = get_stylesheet_directory();
-        break;
-      default:
-        $active_plugins = get_option( 'active_plugins' );
-        if ( is_array( $active_plugins ) && isset( $active_plugins[ $source_type ] ) ) {
-          $source_path = $active_plugins[ $source_type ];
-        }
-        break;
-    }
-
-
-  }
-
-  /**
-   * Delete source callback function.
-   */
 }

@@ -50,7 +50,7 @@ class NoticeManager {
 						data-dismiss-url="<?php print esc_url( $dismiss_url ); ?>"
 					<?php endif; ?>
 					>
-					<p><?php _e( $notice['message'] . ' - ' . $notice['hash'], 'acf-component-manager' ); ?></p>
+					<p><?php _e( $notice['message'], 'acf-component-manager' ); ?></p>
 				</div>
 				<?php
 				$output = ob_get_clean();

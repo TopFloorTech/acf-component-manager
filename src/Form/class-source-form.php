@@ -17,11 +17,11 @@ class SourceForm extends FormBase {
 	/**
 	 * Provides the SourceForm form.
 	 *
-	 * @param array $settings   The settings.
+	 * @param array $sources   The settings.
 	 * @param string $source_id The source id.
 	 */
-	public function form( array $settings, string $source_id ) {
-		$source = $settings['sources'][$source_id] ?? array();
+	public function form( array $sources, string $source_id ) {
+		$source = $sources[$source_id] ?? array();
 		?>
 		<form method="post" action="<?php print $this->get_form_url(); ?>">
 			<?php wp_nonce_field( 'acf_component_manager', 'save' ); ?>
@@ -133,6 +133,12 @@ class SourceForm extends FormBase {
 							name="enabled"
 							<?php if ( isset( $source['enabled'] ) ) { checked( $source['enabled'], 'on' ); } ?>
 						>
+						<?php
+							if ( isset( $source['enabled'] ) && $source['enabled'] === 'on' ) {
+								print '<p class="helper">' . __( 'Disabling this source will deactivate any components using it.', 'acf-component-manager' ) . '</p>';
+							}
+ 						?>
+
 					</td>
 				</tr>
 

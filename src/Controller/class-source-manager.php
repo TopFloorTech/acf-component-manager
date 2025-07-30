@@ -13,6 +13,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 use AcfComponentManager\Form\SourceForm;
+use AcfComponentManager\Service\SourceService;
 use AcfComponentManager\View\SourceView;
 use AcfComponentManager\NoticeManager;
 
@@ -24,13 +25,20 @@ use AcfComponentManager\NoticeManager;
 class SourceManager {
 
 	/**
-	 * Settings.
+	 * AcfComponentManager\NoticeManager definition.
 	 *
 	 * @since 0.0.7
-	 * @access protected
-	 * @var array $settings
+	 * @var \AcfComponentManager\NoticeManager
 	 */
-	protected $settings;
+	protected NoticeManager $noticeManager;
+
+	/**
+	 * AcfComponentManager\Service\SourceService definition.
+	 *
+	 * @since 0.0.7
+	 * @var \AcfComponentManager\Service\SourceService
+	 */
+	protected SourceService $sourceService;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -38,7 +46,17 @@ class SourceManager {
 	 * @since    0.0.7
 	 */
 	public function __construct() {
-		$this->settings = $this->get_settings();
+		$this->load_dependencies();
+	}
+
+	/**
+	 * Load dependencies.
+	 *
+	 * @since 0.0.7
+	 */
+	protected function load_dependencies() {
+		$this->noticeManager = new NoticeManager();
+		$this->sourceService = new SourceService();
 	}
 
 	/**
@@ -56,23 +74,6 @@ class SourceManager {
 	}
 
 	/**
-	 * Get Settings.
-	 *
-	 * @since 0.0.7
-	 * @access public
-	 *
-	 * @return array $settings
-	 */
-	public function get_settings() {
-		$settings = array();
-		$stored_settings = get_option( SETTINGS_OPTION_NAME );
-		if ( $stored_settings ) {
-			$settings = $stored_settings;
-		}
-		return $settings;
-	}
-
-	/**
 	 * Render page.
 	 *
 	 * @since 0.0.1
@@ -86,8 +87,8 @@ class SourceManager {
 		switch ($action) {
 			case 'view':
 				$view = new SourceView( $form_url );
-				$settings = $this->get_settings();
-				$view->view( $settings );
+				$stored_sources = $this->sourceService->get_sources( false );
+				$view->view( $stored_sources );
 				break;
 			case 'add':
 			case 'edit':
@@ -96,7 +97,7 @@ class SourceManager {
 					$source_id = sanitize_text_field( $_GET['source_id'] );
 				}
 				$form = new SourceForm( $form_url );
-				$form->form( $this->get_settings(), $source_id );
+				$form->form( $this->sourceService->get_sources( false ), $source_id );
 				break;
 			case 'delete':
 				$source_id = uniqid();
@@ -104,17 +105,20 @@ class SourceManager {
 					$source_id = sanitize_text_field( $_GET['source_id'] );
 				}
 				$form = new SourceForm( $form_url );
-				$form->delete( $this->get_settings(), $source_id );
+				$form->delete( $this->sourceService->get_sources( false ), $source_id );
 				break;
 		}
 	}
 
-
 	/**
 	 * Dashboard.
+	 *
+	 * @since 0.0.7
+	 *
+	 * @return void
 	 */
-	public function dashboard() {
-		$settings = $this->get_settings();
+	public function dashboard(): void {
+		$settings = $this->sourceService->get_sources();
 		$view = new SourceView( '' );
 		$view->dashboard( $settings );
 	}
@@ -122,59 +126,63 @@ class SourceManager {
 	/**
 	 * Source form callback function.
 	 *
+	 * @since 0.0.7
 	 * @param array $form_data The form data submitted.
+	 *
+	 * @return void
 	 */
-	public function save( array $form_data ) {
-		$settings = $this->get_settings();
+	public function save( array $form_data ): void {
+		$stored_sources = $this->sourceService->get_sources( false );
+		$should_save = true;
 		$source_id = null;
 		$source_data = array();
-		$notice_manager = new NoticeManager();
-		$notice_manager->add_notice( print_r( $form_data, true ), 'error' );
-
 		if ( isset( $form_data['source_id'] ) ) {
 			$source_id = sanitize_text_field( $form_data['source_id'] );
 		}
 		else {
-			$notice_manager->add_notice( 'Source id is not set, please try again.', 'error' );
+			$this->noticeManager->add_notice( 'Source id is not set, please try again.', 'error' );
+			$should_save = false;
 		}
-		if ( $source_id && isset( $settings['sources'][$source_id] ) ) {
-			$source_data = $settings['sources'][$source_id];
+		if ( $source_id && isset( $stored_sources[$source_id] ) ) {
+			$source_data = $stored_sources[$source_id];
 		}
 
 		$enabled = false;
 		if ( isset( $form_data['enabled'] ) ) {
-			$enabled = $form_data['enabled'];
+				$enabled = $form_data['enabled'];
 		}
-
 
 		if ( isset( $form_data['source_type'] ) ) {
 			$source_type = sanitize_text_field( $form_data['source_type'] );
-		}
-		$source_path = '';
-		$source_name = '';
-		switch ( $source_type ) {
-			case 'parent_theme':
-				$source_path = get_template_directory();
-				$source_name = wp_get_theme( get_template() )->get( 'Name' );
-				break;
-			case 'child_theme':
-				$source_path = get_stylesheet_directory();
-				$source_name = wp_get_theme( get_stylesheet() )->get( 'Name' );
-				break;
-			default:
-				$source_path = WP_PLUGIN_DIR . '/' . $source_type;
-				$plugin_data = get_plugin_data( $source_path );
-				$source_name = $plugin_data['Name'];
-				break;
-		}
+			$source_path = '';
+			$source_name = '';
+			switch ( $source_type ) {
+				case 'parent_theme':
+					$source_path = get_template_directory();
+					$source_name = wp_get_theme( get_template() )->get( 'Name' );
+					break;
+				case 'child_theme':
+					$source_path = get_stylesheet_directory();
+					$source_name = wp_get_theme( get_stylesheet() )->get( 'Name' );
+					break;
+				default:
+					$source_path = WP_PLUGIN_DIR . '/' . $source_type;
+					$plugin_data = get_plugin_data( $source_path );
+					$source_name = $plugin_data['Name'];
+					break;
+			}
 
-		$source_data = array(
-			'source_type' => $source_type,
-			'source_path' => $source_path,
-			'source_id' => $source_id,
-			'enabled' => $enabled,
-			'source_name' => $source_name,
-		);
+			$source_data = array(
+				'source_type' => $source_type,
+				'source_path' => $source_path,
+				'source_id' => $source_id,
+				'enabled' => $enabled,
+				'source_name' => $source_name,
+			);
+		}
+		else {
+			$should_save = false;
+		}
 
 		$components_directory = '';
 		if ( isset( $form_data['components_directory'] ) ) {
@@ -204,43 +212,34 @@ class SourceManager {
 		}
 		$source_data['file_directory'] = $file_directory;
 
-		$settings['sources'][$source_id] = $source_data;
-		update_option( SETTINGS_OPTION_NAME, $settings );
+		$stored_sources[$source_id] = $source_data;
+
+		if ( $should_save ) {
+			// If this is an existing source, and was previously enabled, disable any components.
+			if ( ! $enabled ) {
+				do_action( 'acf_component_manager_deactivate_component_source', $source_id );
+			}
+
+			$this->sourceService->set_sources( $stored_sources );
+		}
 	}
 
 	/**
 	 * Delete source callback function.
+	 *
+	 * @since 0.0.7
+	 * @param array $form_data The source delete form fields.
 	 */
 	public function delete( array $form_data ) {
-		$settings = $this->get_settings();
+
+		$stored_sources = $this->sourceService->get_sources( false );
 		if ( isset( $form_data['source_id'] ) ) {
 			$source_id = sanitize_text_field( $form_data['source_id'] );
 		}
-		if ( isset( $settings['sources'][$source_id] ) ) {
-			unset( $settings['sources'][$source_id] );
+		if ( isset( $stored_sources[$source_id] ) ) {
+			unset( $stored_sources[$source_id] );
+			do_action( 'acf_component_manager_deactivate_component_source', $source_id );
 		}
-		update_option( SETTINGS_OPTION_NAME, $settings );
-	}
-
-	/**
-	 * Get sources.
-	 *
-	 * @param string $enabled Defaults to true.
-	 *
-	 * @return array
-	 */
-	public function get_sources( string $enabled = 'on' ) {
-		$settings = $this->get_settings();
-		$sources = array();
-		if ( array_key_exists( 'sources', $settings ) ) {
-			$sources = $settings['sources'];
-		}
-		if ( $enabled && ! empty( $sources ) ) {
-			$sources = array_filter( $sources, function( $source ) {
-				return $source['enabled'] === 'on';
-			});
-
-		}
-		return $sources;
+		$this->sourceService->set_sources( $stored_sources );
 	}
 }

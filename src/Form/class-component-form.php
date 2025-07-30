@@ -34,11 +34,7 @@ class ComponentForm extends FormBase {
 				<p><?php print __( 'ACF Component Manager helps manage ACF components.', 'acf-component-manager' ); ?></p>
 				<p class="instructions">
 					<?php
-					printf(
-						__( 'To manage components with Component Manager, export the ACF component and place the JSON file in your theme\'s <code>/%1$s/{component_name}/%2$s</code> directory.', 'acf-component-manager' ),
-						'components',
-						'assets'
-					);
+					print __( 'To manage components with Component Manager, export the ACF component and place the JSON file in your theme or plugin and configure the source directory.', 'acf-component-manager' )
 					?>
 				</p>
 
@@ -50,6 +46,7 @@ class ComponentForm extends FormBase {
 				<thead>
 				<tr>
 					<th style="padding-left:10px;"><?php print __( 'Component', 'acf-component-manager' ); ?></th>
+					<th><?php print __( 'Component source', 'acf-component-manager' ); ?></th>
 					<th><?php print __( 'File name', 'acf-component-manager' ); ?></th>
 					<th><?php print __( 'Key', 'acf-component-manager' ); ?></th>
 					<th><?php print __( 'Enabled', 'acf-component-manager' ); ?></th>
@@ -63,6 +60,24 @@ class ComponentForm extends FormBase {
 								<?php print $component_properties['name']; ?>
 							</label>
 						</th>
+						<td>
+							<?php print $component_properties['source_name']; ?>
+							<input
+								type="hidden"
+								name="source_id[<?php print $component_properties['hash']; ?>]"
+								value="<?php print $component_properties['source_id']; ?>"
+							>
+							<input
+								type="hidden"
+								name="path[<?php print $component_properties['hash']; ?>]"
+								value="<?php print $component_properties['path']; ?>"
+							>
+							<input
+								type="hidden"
+								name="source_name[<?php print $component_properties['hash']; ?>]"
+								value="<?php print $component_properties['source_name']; ?>"
+							>
+						</td>
 						<?php
 						if ( isset( $component_properties['files'] ) ) {
 							if ( count( $component_properties['files'] ) > 1 ) {
