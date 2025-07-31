@@ -44,7 +44,7 @@ class Upgrader {
 	 * AcfComponentManager\Controller\ComponentManager definition.
 	 *
 	 * @since 0.0.7
-   * @var \AcfComponentManager\Controller\ComponentManager
+	 * @var \AcfComponentManager\Controller\ComponentManager
 	 */
 	protected ComponentManager $componentManager;
 
@@ -52,7 +52,7 @@ class Upgrader {
 	 * AcfComponentManager\Controller\SettingsManager definition.
 	 *
 	 * @since 0.0.7
-   * @var \AcfComponentManager\Controller\SettingsManager
+	 * @var \AcfComponentManager\Controller\SettingsManager
 	 */
 	protected SettingsManager $settingsManager;
 
@@ -85,7 +85,7 @@ class Upgrader {
 		$this->noticeManager = new NoticeManager();
 		$this->componentManager = new ComponentManager();
 		$this->settingsManager = new SettingsManager();
-    $this->sourceService = new SourceService();
+		$this->sourceService = new SourceService();
 	}
 
 	/**
@@ -141,7 +141,7 @@ class Upgrader {
 		$fails = array();
 		$successes = array();
 		foreach ( $available_upgrades as $version => $callback ) {
-			$success = call_user_func( $callback );
+			$success = call_user_func( array( $this, $callback ) );
 			if ( ! $success ) {
 				$fails[] = $version;
 			}
@@ -155,9 +155,9 @@ class Upgrader {
 			}
 		}
 		if ( ! empty( $successes ) ) {
-			foreach ($successes as $success) {
+			foreach ( $successes as $success ) {
 
-				$this->noticeManager->add_notice('Upgrade completed. ' . $success, 'success');
+				$this->noticeManager->add_notice( 'Upgrade completed. ' . $success, 'success' );
 			}
 		}
 	}
@@ -172,39 +172,39 @@ class Upgrader {
 	public function upgrade_007() {
 		$settings = $this->setttingsManager->get_settings();
 		$new_source = array();
-  	$parent_theme_directory = get_template_directory();
+		$parent_theme_directory = get_template_directory();
 		$child_theme_directory = get_stylesheet_directory();
 
 		if ( isset( $settings['active_theme_directory'] ) ) {
 				if ( $settings['active_theme_directory'] === $parent_theme_directory ) {
 					$new_source = array(
-            'source_id' => uniqid(),
+						'source_id' => uniqid(),
 						'source_type' => 'parent_theme',
 						'source_path' => $parent_theme_directory,
-            'source_name' => wp_get_theme( get_template() )->get( 'Name' ),
+						'source_name' => wp_get_theme( get_template() )->get( 'Name' ),
 						'file_directory' => $settings['file_directory'] ?? '',
 						'components_directory' => $settings['components_directory'] ?? '',
 					);
 				}
 				else {
 					$new_source = array(
-            'source_id' => uniqid(),
+						'source_id' => uniqid(),
 						'source_type' => 'child_theme',
 						'source_path' => $child_theme_directory,
-            'source_name' => wp_get_theme( get_stylesheet() )->get( 'Name' ),
+						'source_name' => wp_get_theme( get_stylesheet() )->get( 'Name' ),
 						'file_directory' => $settings['file_directory'] ?? '',
 						'components_directory' => $settings['components_directory'] ?? '',
 					);
 				}
 				if ( ! empty( $new_source ) ) {
-         $this->sourceService->set_sources( array( $new_source['source_id'] => $new_source ) );
+					$this->sourceService->set_sources( array( $new_source['source_id'] => $new_source ) );
 					// Get any stored components, add the new source key.
 					$components = $this->componentManager->get_stored_components();
 
 					if ( ! empty( $components ) ) {
 						foreach ( $components as $component ) {
 							$component['source_id'] = $new_source['source_id'];
-              $component['source_name'] = $new_source['source_name'];
+							$component['source_name'] = $new_source['source_name'];
 						}
 
 						$this->componentManager->set_stored_components( $components );
@@ -218,5 +218,4 @@ class Upgrader {
 		);
 		return update_option( SETTINGS_OPTION_NAME, $new_settings );
 	}
-
 }

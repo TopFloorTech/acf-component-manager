@@ -87,14 +87,14 @@ class AcfComponentManager {
 	 */
 	protected $settingsManager;
 
-  /**
-   * AcfComponentManager\Controller\SourceManager definition.
-   *
-   * @var \AcfComponentManager\Controller\SourceManager
-   *
-   * @since 0.0.7
-   */
-  protected $sourceManager;
+	/**
+	 * AcfComponentManager\Controller\SourceManager definition.
+	 *
+	 * @var \AcfComponentManager\Controller\SourceManager
+	 *
+	 * @since 0.0.7
+	 */
+	protected $sourceManager;
 
 	/**
 	 * AcfComponentManager\NoticeManager definition.
@@ -168,7 +168,7 @@ class AcfComponentManager {
 		$this->loader = new Loader();
 		$this->componentManager = new ComponentManager();
 		$this->settingsManager = new SettingsManager();
-    $this->sourceManager = new SourceManager();
+		$this->sourceManager = new SourceManager();
 		$this->dashboardManager = new DashboardManager();
 		$this->toolsManager = new ToolsManager();
 		$this->noticeManager = new NoticeManager();
@@ -192,9 +192,8 @@ class AcfComponentManager {
 	 * Get 'Options'.
 	 *
 	 * @since 0.0.1
-	 * @access public
 	 *
-	 * @return array $options
+	 * @return array The plugin options.
 	 */
 	public function get_options() {
 
@@ -220,7 +219,7 @@ class AcfComponentManager {
 		$this->loader->add_action( 'acf_component_manager_dashboard', $component_manager, 'dashboard', 10 );
 		$this->loader->add_action( 'acf_component_manager_tools', $component_manager, 'tools', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_components', $component_manager, 'save', 10, 1 );
-    $this->loader->add_action( 'acf_component_manager_deactivate_component_source', $component_manager, 'deactivate_component_source', 10, 1 );
+		$this->loader->add_action( 'acf_component_manager_deactivate_component_source', $component_manager, 'deactivate_component_source', 10, 1 );
 		$this->loader->add_action( 'acf_component_manager_export_manage_components', $component_manager, 'export', 10, 1 );
 		$this->loader->add_filter( 'acf_component_manager_tabs', $component_manager, 'add_menu_tab', 15 );
 		$this->loader->add_filter( 'acf/json/save_file_name', $component_manager, 'filter_save_filename', 10, 3 );
@@ -242,12 +241,12 @@ class AcfComponentManager {
 		$this->loader->add_action( 'acf_component_manager_save_manage_settings', $settings_manager, 'save', 10, 1 );
 		$this->loader->add_filter( 'acf_component_manager_tabs', $settings_manager, 'add_menu_tab', 10 );
 
-    $source_manager = $this->sourceManager;
-    $this->loader->add_action( 'acf_component_manager_render_page_manage_sources', $source_manager, 'render_page', 10, 2 );
-    $this->loader->add_action( 'acf_component_manager_dashboard', $source_manager, 'dashboard', 5 );
-    $this->loader->add_filter( 'acf_component_manager_tabs', $source_manager, 'add_menu_tab', 10 );
-    $this->loader->add_action( 'acf_component_manager_save_manage_sources', $source_manager, 'save', 10, 1 );
-    $this->loader->add_action( 'acf_component_manager_delete_manage_sources', $source_manager, 'delete', 10 );
+		$source_manager = $this->sourceManager;
+		$this->loader->add_action( 'acf_component_manager_render_page_manage_sources', $source_manager, 'render_page', 10, 2 );
+		$this->loader->add_action( 'acf_component_manager_dashboard', $source_manager, 'dashboard', 5 );
+		$this->loader->add_filter( 'acf_component_manager_tabs', $source_manager, 'add_menu_tab', 10 );
+		$this->loader->add_action( 'acf_component_manager_save_manage_sources', $source_manager, 'save', 10, 1 );
+		$this->loader->add_action( 'acf_component_manager_delete_manage_sources', $source_manager, 'delete', 10 );
 
 		$notice_manager = $this->noticeManager;
 		$this->loader->add_action( 'admin_init', $notice_manager, 'dismiss_notice' );

@@ -93,15 +93,7 @@ class SettingsManager {
 				$form = new SettingsForm( $form_url );
 				$form->form( $this->get_settings() );
 				break;
-      case 'add-source':
-      case 'edit-source':
-        $source_id = uniqid();
-        if ( isset( $_GET['source_id'] ) ) {
-          $source_id = sanitize_text_field( $_GET['source_id'] );
-        }
-        $form = new SourceForm( $form_url );
-        $form->form( $this->get_settings(), $source_id );
-        break;
+
 		}
 	}
 
