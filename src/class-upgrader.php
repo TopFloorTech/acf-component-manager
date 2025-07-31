@@ -17,34 +17,44 @@ if ( ! defined( 'WPINC' ) ) {
 use AcfComponentManager\Controller\ComponentManager;
 use AcfComponentManager\Controller\SettingsManager;
 use AcfComponentManager\NoticeManager;
+use AcfComponentManager\Service\SourceService;
 
 /**
  * Contains Upgrader class.
  */
 class Upgrader {
 
+  /**
+   * AcfComponentManager\Service\SourceService definition.
+   *
+   * @since 0.0.7
+   * @var \AcfComponentManager\Service\SourceService
+   */
+  protected SourceService $sourceService;
+
 	/**
-	 * AcfComponentManager\NoticeManager defintion.
+	 * AcfComponentManager\NoticeManager definition.
 	 *
 	 * @since 0.0.7
-	 * @access protected
 	 * @var \AcfComponentManager\NoticeManager
 	 */
-	protected $noticeManager;
+	protected NoticeManager $noticeManager;
 
 	/**
 	 * AcfComponentManager\Controller\ComponentManager definition.
 	 *
-	 * @var \AcfComponentManager\Controller\ComponentManager
+	 * @since 0.0.7
+   * @var \AcfComponentManager\Controller\ComponentManager
 	 */
-	protected $componentManager;
+	protected ComponentManager $componentManager;
 
 	/**
 	 * AcfComponentManager\Controller\SettingsManager definition.
 	 *
-	 * @var \AcfComponentManager\Controller\SettingsManager
+	 * @since 0.0.7
+   * @var \AcfComponentManager\Controller\SettingsManager
 	 */
-	protected $settingsManager;
+	protected SettingsManager $settingsManager;
 
 	/**
 	 * Array of upgrade versions and functions.
@@ -75,6 +85,7 @@ class Upgrader {
 		$this->noticeManager = new NoticeManager();
 		$this->componentManager = new ComponentManager();
 		$this->settingsManager = new SettingsManager();
+    $this->sourceService = new SourceService();
 	}
 
 	/**
@@ -140,13 +151,13 @@ class Upgrader {
 		}
 		if ( ! empty( $fails ) ) {
 			foreach ( $fails as $fail ) {
-				$this->noticeManager::add_notice( 'Upgrade failed. ' . $fail, 'error' );
+				$this->noticeManager->add_notice( 'Upgrade failed. ' . $fail, 'error' );
 			}
 		}
 		if ( ! empty( $successes ) ) {
 			foreach ($successes as $success) {
 
-				$this->noticeManager::add_notice('Upgrade completed. ' . $success, 'success');
+				$this->noticeManager->add_notice('Upgrade completed. ' . $success, 'success');
 			}
 		}
 	}
@@ -167,28 +178,33 @@ class Upgrader {
 		if ( isset( $settings['active_theme_directory'] ) ) {
 				if ( $settings['active_theme_directory'] === $parent_theme_directory ) {
 					$new_source = array(
-						'source' => 'parent_theme',
-						'base_path' => $parent_theme_directory,
+            'source_id' => uniqid(),
+						'source_type' => 'parent_theme',
+						'source_path' => $parent_theme_directory,
+            'source_name' => wp_get_theme( get_template() )->get( 'Name' ),
 						'file_directory' => $settings['file_directory'] ?? '',
 						'components_directory' => $settings['components_directory'] ?? '',
 					);
 				}
 				else {
 					$new_source = array(
-						'source' => 'child_theme',
-						'base_path' => $child_theme_directory,
+            'source_id' => uniqid(),
+						'source_type' => 'child_theme',
+						'source_path' => $child_theme_directory,
+            'source_name' => wp_get_theme( get_stylesheet() )->get( 'Name' ),
 						'file_directory' => $settings['file_directory'] ?? '',
 						'components_directory' => $settings['components_directory'] ?? '',
 					);
 				}
 				if ( ! empty( $new_source ) ) {
-
+         $this->sourceService->set_sources( array( $new_source['source_id'] => $new_source ) );
 					// Get any stored components, add the new source key.
 					$components = $this->componentManager->get_stored_components();
 
 					if ( ! empty( $components ) ) {
 						foreach ( $components as $component ) {
-							$component['source'] = $new_source['source'];
+							$component['source_id'] = $new_source['source_id'];
+              $component['source_name'] = $new_source['source_name'];
 						}
 
 						$this->componentManager->set_stored_components( $components );
@@ -199,7 +215,6 @@ class Upgrader {
 		$new_settings = array(
 			'version' => ACF_COMPONENT_MANAGER_VERSION,
 			'dev_mode' => $settings['dev_mode'] ?? false,
-			'sources' => $new_source,
 		);
 		return update_option( SETTINGS_OPTION_NAME, $new_settings );
 	}

@@ -168,7 +168,12 @@ class SourceManager {
 				default:
 					$source_path = WP_PLUGIN_DIR . '/' . $source_type;
 					$plugin_data = get_plugin_data( $source_path );
-					$source_name = $plugin_data['Name'];
+					if ( ! empty( $plugin_data ) && isset( $plugin_data['Name'] ) ) {
+						$source_name = $plugin_data['Name'];
+					}
+					else {
+						$should_save = false;
+					}
 					break;
 			}
 

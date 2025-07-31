@@ -24,15 +24,6 @@ use AcfComponentManager\NoticeManager;
 class ComponentManager {
 
 	/**
-	 * Settings.
-	 *
-	 * @since 0.0.1
-	 * @access protected
-	 * @var array $settings
-	 */
-	protected array $settings;
-
-	/**
 	 * AcfComponentManager\NoticeManager definition.
 	 *
 	 * @var \AcfComponentManager\NoticeManager
@@ -61,7 +52,6 @@ class ComponentManager {
 	 * @since    0.0.1
 	 */
 	public function __construct() {
-		$this->settings = $this->get_settings();
     $this->load_dependencies();
 	}
 
@@ -261,7 +251,7 @@ class ComponentManager {
 	public function get_theme_components(): array {
 		$components = array();
 
-		$settings = $this->settings;
+		$settings = $this->get_settings();
 
 		if ( ! isset( $settings['active_theme_directory'] ) ) {
 			return $components;
@@ -307,11 +297,11 @@ class ComponentManager {
     if ( empty( $sources ) ) {
       return $components;
     }
-    foreach ( $sources as $source ) {
-      $path_parts = array(
+    foreach ($sources as $source) {
+      $path_parts = [
         $source['source_path'],
         $source['components_directory'],
-      );
+      ];
 
       $path_parts = implode( '/', $path_parts );
 

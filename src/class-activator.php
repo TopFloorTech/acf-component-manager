@@ -72,7 +72,7 @@ class Activator {
 			die( __( 'ACF Component Manager not activated!  Your site does not meet the minimum requirements. Minimum Requirements: PHP Version: ' . self::$min_php_version . ', WordPress Version: ' . self::$min_wordpress_version, 'acf-component-manager' ) );
 		}
 
-		$setUp = self::set_up();
+		self::set_up();
 	}
 
 	/**
@@ -103,9 +103,6 @@ class Activator {
 		$settings = array(
 			'version' => ACF_COMPONENT_MANAGER_VERSION,
 			'dev_mode' => $dev_mode,
-			'active_theme_directory' => get_stylesheet_directory(),
-			'components_directory' => 'components',
-			'file_directory' => 'assets',
 		);
 		update_option( 'acf-component-manager-settings', $settings );
 	}
