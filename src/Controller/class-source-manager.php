@@ -143,13 +143,13 @@ class SourceManager {
 			$this->noticeManager->add_notice( 'Source id is not set, please try again.', 'error' );
 			$should_save = false;
 		}
-		if ( $source_id && isset( $stored_sources[$source_id] ) ) {
-			$source_data = $stored_sources[$source_id];
+		if ( $source_id && isset( $stored_sources[ $source_id ] ) ) {
+			$source_data = $stored_sources[ $source_id ];
 		}
 
 		$enabled = false;
 		if ( isset( $form_data['enabled'] ) ) {
-				$enabled = $form_data['enabled'];
+			$enabled = $form_data['enabled'];
 		}
 
 		if ( isset( $form_data['source_type'] ) ) {
@@ -170,7 +170,7 @@ class SourceManager {
 					$plugin_data = get_plugin_data( $source_path );
 					if ( ! empty( $plugin_data ) && isset( $plugin_data['Name'] ) ) {
 						$source_name = $plugin_data['Name'];
-					}	else {
+					} else {
 						$should_save = false;
 					}
 					break;

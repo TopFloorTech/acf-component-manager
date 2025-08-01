@@ -23,11 +23,11 @@ use AcfComponentManager\Service\SourceService;
  */
 class Upgrader {
 
-  /**
-   * AcfComponentManager\Service\SourceService definition.
-   *
-   * @since 0.0.7
-   * @var \AcfComponentManager\Service\SourceService
+	/**
+	 * AcfComponentManager\Service\SourceService definition.
+	 *
+	 * @since 0.0.7
+	 * @var \AcfComponentManager\Service\SourceService
    */
 	protected SourceService $sourceService;
 
@@ -133,7 +133,7 @@ class Upgrader {
 	 * Run available upgrades.
 	 *
 	 * @since 0.0.7
-	 * @param array $available_upgrades
+	 * @param array $available_upgrades An array of available upgrades.
 	 */
 	public function run_upgrades( array $available_upgrades ) {
 		$fails = array();
@@ -142,8 +142,7 @@ class Upgrader {
 			$success = call_user_func( array( $this, $callback ) );
 			if ( ! $success ) {
 				$fails[] = $version;
-			}
-			else {
+			} else {
 				$successes[] = $version;
 			}
 		}

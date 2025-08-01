@@ -298,10 +298,10 @@ class ComponentManager {
 			return $components;
 		}
 		foreach ( $sources as $source ) {
-			$path_parts = [
+			$path_parts = array(
 				$source['source_path'],
 				$source['components_directory'],
-			];
+			);
 
 			$path_parts = implode( '/', $path_parts );
 

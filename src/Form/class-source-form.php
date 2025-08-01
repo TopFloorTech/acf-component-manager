@@ -38,7 +38,7 @@ class SourceForm extends FormBase {
 						<?php
 						$active_plugins = get_option( 'active_plugins' );
 						?>
-						<select name="source_type" required>
+						<select name="source_type" id="source_type" required>
 							<?php
 							$parent_theme_name = wp_get_theme( get_template() )->get( 'Name' );
 							$child_theme_name = wp_get_theme( '' )->get( 'Name' );
@@ -138,10 +138,10 @@ class SourceForm extends FormBase {
 							?>
 						>
 						<?php
-							if ( isset( $source['enabled'] ) && 'on' === $source['enabled'] ) {
-								print '<p class="helper">' . __( 'Disabling this source will deactivate any components using it.', 'acf-component-manager' ) . '</p>';
-							}
- 						?>
+						if ( isset( $source['enabled'] ) && 'on' === $source['enabled'] ) {
+							print '<p class="helper">' . __( 'Disabling this source will deactivate any components using it.', 'acf-component-manager' ) . '</p>';
+						}
+						?>
 
 					</td>
 				</tr>
