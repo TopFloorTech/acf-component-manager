@@ -33,10 +33,13 @@ class SourceService {
 		if ( $stored_sources ) {
 			$sources = unserialize( $stored_sources );
 		}
-		if ( $enabled === 'on' && ! empty( $sources ) ) {
-			$sources = array_filter( $sources, function( $source ) {
-				return $source['enabled'] === 'on';
-			});
+		if ( 'on' === $enabled && ! empty( $sources ) ) {
+			$sources = array_filter(
+				$sources,
+				function ( $source ) {
+					return 'on' === $source['enabled'];
+				}
+			);
 
 		}
 		return $sources;

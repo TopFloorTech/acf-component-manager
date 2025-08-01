@@ -77,8 +77,7 @@ class SourceView extends ViewBase {
 
 					<?php
 				}
-			}
-			else {
+			} else {
 				?>
 				<tr>
 					<td colspan="6">

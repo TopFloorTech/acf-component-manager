@@ -3,6 +3,7 @@
  * Contains the SettingsManager class.
  *
  * @since 0.0.1
+ * @package acf-component-manager
  */
 
 namespace AcfComponentManager\Controller;
@@ -123,5 +124,4 @@ class SettingsManager {
 
 		update_option( SETTINGS_OPTION_NAME, $settings );
 	}
-
 }

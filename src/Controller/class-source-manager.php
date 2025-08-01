@@ -3,6 +3,7 @@
  * Contains the SourceManager class.
  *
  * @since 0.0.7
+ * @package acf-component-manager
  */
 
 namespace AcfComponentManager\Controller;
@@ -82,9 +83,9 @@ class SourceManager {
 	 * @param string $form_url The form URL.
 	 */
 	public function render_page( string $action = 'view', string $form_url = '' ) {
-		print '<h2>' . __('Manage Sources', 'acf-component_manager') . '</h2>';
+		print '<h2>' . __( 'Manage Sources', 'acf-component_manager' ) . '</h2>';
 
-		switch ($action) {
+		switch ( $action ) {
 			case 'view':
 				$view = new SourceView( $form_url );
 				$stored_sources = $this->sourceService->get_sources( false );
@@ -138,8 +139,7 @@ class SourceManager {
 		$source_data = array();
 		if ( isset( $form_data['source_id'] ) ) {
 			$source_id = sanitize_text_field( $form_data['source_id'] );
-		}
-		else {
+		} else {
 			$this->noticeManager->add_notice( 'Source id is not set, please try again.', 'error' );
 			$should_save = false;
 		}
@@ -170,8 +170,7 @@ class SourceManager {
 					$plugin_data = get_plugin_data( $source_path );
 					if ( ! empty( $plugin_data ) && isset( $plugin_data['Name'] ) ) {
 						$source_name = $plugin_data['Name'];
-					}
-					else {
+					}	else {
 						$should_save = false;
 					}
 					break;
@@ -184,8 +183,7 @@ class SourceManager {
 				'enabled' => $enabled,
 				'source_name' => $source_name,
 			);
-		}
-		else {
+		} else {
 			$should_save = false;
 		}
 
@@ -217,7 +215,7 @@ class SourceManager {
 		}
 		$source_data['file_directory'] = $file_directory;
 
-		$stored_sources[$source_id] = $source_data;
+		$stored_sources[ $source_id ] = $source_data;
 
 		if ( $should_save ) {
 			// If this is an existing source, and was previously enabled, disable any components.
@@ -241,8 +239,8 @@ class SourceManager {
 		if ( isset( $form_data['source_id'] ) ) {
 			$source_id = sanitize_text_field( $form_data['source_id'] );
 		}
-		if ( isset( $stored_sources[$source_id] ) ) {
-			unset( $stored_sources[$source_id] );
+		if ( isset( $stored_sources[ $source_id ] ) ) {
+			unset( $stored_sources[ $source_id ] );
 			do_action( 'acf_component_manager_deactivate_component_source', $source_id );
 		}
 		$this->sourceService->set_sources( $stored_sources );

@@ -16,7 +16,6 @@ if ( ! defined( 'WPINC' ) ) {
 
 use AcfComponentManager\Controller\ComponentManager;
 use AcfComponentManager\Controller\SettingsManager;
-use AcfComponentManager\NoticeManager;
 use AcfComponentManager\Service\SourceService;
 
 /**
@@ -30,7 +29,7 @@ class Upgrader {
    * @since 0.0.7
    * @var \AcfComponentManager\Service\SourceService
    */
-  protected SourceService $sourceService;
+	protected SourceService $sourceService;
 
 	/**
 	 * AcfComponentManager\NoticeManager definition.
@@ -91,20 +90,19 @@ class Upgrader {
 	/**
 	 * Runs the upgrade complete hook.
 	 *
-	 * @param $upgrader_object array
-	 * @param $options array
 	 * @since 0.0.7
-	 * @access public
+	 * @param array $upgrader_object The upgrader object.
+	 * @param array $options         The options array.
 	 */
 	public static function upgrade_complete( array $upgrader_object, array $options ) {
-		// The path to our plugin's main file
+		// The path to our plugin's main file.
 		$our_plugin = plugin_basename( __FILE__ );
-		// If an update has taken place and the updated type is plugins and the plugins element exists
-		if( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
-			// Iterate through the plugins being updated and check if ours is there
-			foreach( $options['plugins'] as $plugin ) {
-				if( $plugin == $our_plugin ) {
-					// Set a transient to record that our plugin has just been updated
+		// If an update has taken place and the updated type is plugins and the plugins element exists.
+		if ( 'update' == $options['action'] && 'plugin' == $options['type'] && isset( $options['plugins'] ) ) {
+			// Iterate through the plugins being updated and check if ours is present.
+			foreach ( $options['plugins'] as $plugin ) {
+				if ( $plugin == $our_plugin ) {
+					// Set a transient to record that our plugin has just been updated.
 					set_transient( 'acf_updated', 1 );
 				}
 			}
@@ -124,7 +122,7 @@ class Upgrader {
 		if ( isset( $settings['version'] ) && $settings['version'] > ACF_COMPONENT_MANAGER_VERSION ) {
 			foreach ( $this->upgrade_versions as $version => $callback ) {
 				if ( version_compare( $version, $settings['version'], '<' ) ) {
-					$available_upgrades[$version] = $callback;
+					$available_upgrades[ $version ] = $callback;
 				}
 			}
 		}
@@ -156,7 +154,6 @@ class Upgrader {
 		}
 		if ( ! empty( $successes ) ) {
 			foreach ( $successes as $success ) {
-
 				$this->noticeManager->add_notice( 'Upgrade completed. ' . $success, 'success' );
 			}
 		}
@@ -169,48 +166,46 @@ class Upgrader {
 	 *
 	 * @return bool If successful.
 	 */
-	public function upgrade_007() {
-		$settings = $this->setttingsManager->get_settings();
+	public function upgrade_007(): bool {
+		$settings = $this->settingsManager->get_settings();
 		$new_source = array();
 		$parent_theme_directory = get_template_directory();
 		$child_theme_directory = get_stylesheet_directory();
 
 		if ( isset( $settings['active_theme_directory'] ) ) {
-				if ( $settings['active_theme_directory'] === $parent_theme_directory ) {
-					$new_source = array(
-						'source_id' => uniqid(),
-						'source_type' => 'parent_theme',
-						'source_path' => $parent_theme_directory,
-						'source_name' => wp_get_theme( get_template() )->get( 'Name' ),
-						'file_directory' => $settings['file_directory'] ?? '',
-						'components_directory' => $settings['components_directory'] ?? '',
-					);
-				}
-				else {
-					$new_source = array(
-						'source_id' => uniqid(),
-						'source_type' => 'child_theme',
-						'source_path' => $child_theme_directory,
-						'source_name' => wp_get_theme( get_stylesheet() )->get( 'Name' ),
-						'file_directory' => $settings['file_directory'] ?? '',
-						'components_directory' => $settings['components_directory'] ?? '',
-					);
-				}
-				if ( ! empty( $new_source ) ) {
-					$this->sourceService->set_sources( array( $new_source['source_id'] => $new_source ) );
-					// Get any stored components, add the new source key.
-					$components = $this->componentManager->get_stored_components();
+			if ( $settings['active_theme_directory'] === $parent_theme_directory ) {
+				$new_source = array(
+					'source_id' => uniqid(),
+					'source_type' => 'parent_theme',
+					'source_path' => $parent_theme_directory,
+					'source_name' => wp_get_theme( get_template() )->get( 'Name' ),
+					'file_directory' => $settings['file_directory'] ?? '',
+					'components_directory' => $settings['components_directory'] ?? '',
+				);
+			} else {
+				$new_source = array(
+					'source_id' => uniqid(),
+					'source_type' => 'child_theme',
+					'source_path' => $child_theme_directory,
+					'source_name' => wp_get_theme( get_stylesheet() )->get( 'Name' ),
+					'file_directory' => $settings['file_directory'] ?? '',
+					'components_directory' => $settings['components_directory'] ?? '',
+				);
+			}
+			if ( ! empty( $new_source ) ) {
+				$this->sourceService->set_sources( array( $new_source['source_id'] => $new_source ) );
+				// Get any stored components, add the new source key.
+				$components = $this->componentManager->get_stored_components();
 
-					if ( ! empty( $components ) ) {
-						foreach ( $components as $component ) {
-							$component['source_id'] = $new_source['source_id'];
-							$component['source_name'] = $new_source['source_name'];
-						}
-
-						$this->componentManager->set_stored_components( $components );
+				if ( ! empty( $components ) ) {
+					foreach ( $components as $component ) {
+						$component['source_id'] = $new_source['source_id'];
+						$component['source_name'] = $new_source['source_name'];
 					}
 
+					$this->componentManager->set_stored_components( $components );
 				}
+			}
 		}
 		$new_settings = array(
 			'version' => ACF_COMPONENT_MANAGER_VERSION,

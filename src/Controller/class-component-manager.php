@@ -243,7 +243,7 @@ class ComponentManager {
 	 * Get theme components.
 	 *
 	 * @since 0.0.1
-   * @deprecated 0.0.7 Use get_discovered_components().
+	 * @deprecated 0.0.7 Use get_discovered_components().
 	 *
 	 * @return array
 	 *   An array of eligible theme components.
@@ -297,7 +297,7 @@ class ComponentManager {
 		if ( empty( $sources ) ) {
 			return $components;
 		}
-		foreach ($sources as $source) {
+		foreach ( $sources as $source ) {
 			$path_parts = [
 				$source['source_path'],
 				$source['components_directory'],
@@ -315,13 +315,13 @@ class ComponentManager {
 					$components[] = array(
 						'source_id' => $source['source_id'],
 						'source_name' => $source['source_name'],
- 						'name' => $component['Component'],
+						'name' => $component['Component'],
 						'path' => $component_path,
 						'hash' => wp_hash( $component_path, '' ),
 					);
 				}
 			}
- 		}
+		}
 		 return $components;
 	}
 
@@ -351,17 +351,17 @@ class ComponentManager {
 				}
 
 				if ( $key ) {
-          $file_name = str_replace( $path_pattern, '', $files );
-          $acf_files[] = array(
-            'file_name' => $file_name,
-            'path' => $component['path'],
-            'key' => $key,
-          );
-        }
-      }
-    }
-    return $acf_files;
-  }
+					$file_name = str_replace( $path_pattern, '', $files );
+					$acf_files[] = array(
+						'file_name' => $file_name,
+						'path' => $component['path'],
+						'key' => $key,
+					);
+				}
+			}
+		}
+		return $acf_files;
+	}
 
 	/**
 	 * Get ACF json files from components.
@@ -898,11 +898,14 @@ class ComponentManager {
 	protected function get_component_acf_file_path( array $component ): string|false {
 		$sources = $this->sourceService->get_sources();
 
-		$sources = array_filter( $sources, function ( $source ) use ( $component ) {
-			return $source['source_id'] === $component['source_id'];
-		});
+		$sources = array_filter(
+			$sources,
+			function ( $source ) use ( $component ) {
+				return $source['source_id'] === $component['source_id'];
+			}
+		);
 
-		 if ( ! empty( $sources ) ) {
+		if ( ! empty( $sources ) ) {
 			$source = reset( $sources );
 			$component_file_path = $source['file_directory'];
 			return trailingslashit( $component['path'] . '/' . $component_file_path );
