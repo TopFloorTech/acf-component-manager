@@ -28,7 +28,7 @@ class Upgrader {
 	 *
 	 * @since 0.0.7
 	 * @var \AcfComponentManager\Service\SourceService
-   */
+	 */
 	protected SourceService $sourceService;
 
 	/**
