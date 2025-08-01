@@ -1,6 +1,6 @@
 {
 	"name": "scottsawyer/acf-component-manager",
-	"description": "Allows organizing Advanced Custom Fields into theme components.",
+	"description": "Allows organizing Advanced Custom Fields into components.",
 	"type": "wordpress-plugin",
 	"license": "GPL-3.0-or-later",
 	"homepage": "https://github.com/scottsawyer/acf-component-manager",
@@ -10,7 +10,7 @@
 		}
 	],
 	"require": {
-		"php": ">=7.4"
+		"php": ">=8.0"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "*",

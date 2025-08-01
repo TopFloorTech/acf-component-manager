@@ -2,7 +2,8 @@
 /**
  * Contains the SettingsManager class.
  *
- * @package 0.0.1
+ * @since 0.0.1
+ * @package acf-component-manager
  */
 
 namespace AcfComponentManager\Controller;
@@ -13,6 +14,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 use AcfComponentManager\Form\SettingsForm;
+use AcfComponentManager\Form\SourceForm;
 use AcfComponentManager\View\ComponentView;
 use AcfComponentManager\View\SettingsView;
 
@@ -58,11 +60,11 @@ class SettingsManager {
 	 * Get Settings.
 	 *
 	 * @since 0.0.1
-	 * @access private
+	 * @access public
 	 *
 	 * @return array $settings
 	 */
-	private function get_settings() {
+	public function get_settings() {
 		$settings = array();
 		$stored_settings = get_option( SETTINGS_OPTION_NAME );
 		if ( $stored_settings ) {
@@ -92,6 +94,7 @@ class SettingsManager {
 				$form = new SettingsForm( $form_url );
 				$form->form( $this->get_settings() );
 				break;
+
 		}
 	}
 
@@ -118,37 +121,6 @@ class SettingsManager {
 			$dev_mode = $form_data['dev_mode'];
 		}
 		$settings['dev_mode'] = $dev_mode;
-
-		// Force resaving active_theme_directory.
-		$settings['active_theme_directory'] = get_stylesheet_directory();
-
-		$components_directory = '';
-		if ( isset( $form_data['components_directory'] ) ) {
-			$components_directory = sanitize_text_field( $form_data['components_directory'] );
-			$components_directory_parts = explode( '/', $components_directory );
-			$directory_parts = array();
-			foreach ( $components_directory_parts as $part ) {
-				if ( ! empty( $part ) ) {
-					$directory_parts[] = $part;
-				}
-			}
-			$components_directory = implode( '/', $directory_parts );
-		}
-		$settings['components_directory'] = $components_directory;
-
-		$file_directory = '';
-		if ( isset( $form_data['file_directory'] ) ) {
-			$file_directory = sanitize_text_field( $form_data['file_directory'] );
-			$file_directory_parts = explode( '/', $file_directory );
-			$directory_parts = array();
-			foreach ( $file_directory_parts as $part ) {
-				if ( ! empty( $part ) ) {
-					$directory_parts[] = $part;
-				}
-			}
-			$file_directory = implode( '/', $directory_parts );
-		}
-		$settings['file_directory'] = $file_directory;
 
 		update_option( SETTINGS_OPTION_NAME, $settings );
 	}

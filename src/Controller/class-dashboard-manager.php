@@ -34,6 +34,11 @@ class DashboardManager {
 		<h4><?php print __( 'Settings', 'acf-component-manager' ); ?>:</h4>
 		<ol>
 			<li><?php print __( 'Enable "Dev mode".', 'acf-component-manager' ); ?></li>
+
+		</ol>
+		<h4><?php print __( 'Add sources', 'acf-component-manager' ); ?></h4>
+		<ol>
+			<li><?php print __( 'Select the themes and plugins that contain the components.', 'acf-component-manager' ); ?></li>
 			<li><?php print __( 'Set the Components directory (relative to the theme).', 'acf-component-manager' ); ?></li>
 			<li><?php print __( 'Set the ACF file directory.  This is the directory inside the component where the ACF JSON file will live.', 'acf-component-manager' ); ?></li>
 		</ol>

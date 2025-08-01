@@ -15,10 +15,12 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 use AcfComponentManager\Controller\ComponentManager;
-use AcfComponentManager\Controller\SettingsManager;
 use AcfComponentManager\Controller\DashboardManager;
+use AcfComponentManager\Controller\SettingsManager;
+use AcfComponentManager\Controller\SourceManager;
 use AcfComponentManager\Controller\ToolsManager;
 use AcfComponentManager\NoticeManager;
+use AcfComponentManager\Upgrader;
 
 /**
  * Main plugin class.
@@ -86,6 +88,15 @@ class AcfComponentManager {
 	protected $settingsManager;
 
 	/**
+	 * AcfComponentManager\Controller\SourceManager definition.
+	 *
+	 * @var \AcfComponentManager\Controller\SourceManager
+	 *
+	 * @since 0.0.7
+	 */
+	protected $sourceManager;
+
+	/**
 	 * AcfComponentManager\NoticeManager definition.
 	 *
 	 * @var \AcfComponentManager\NoticeManager
@@ -105,6 +116,13 @@ class AcfComponentManager {
 	 * @var \AcfComponentManager\Controller\ToolsManager
 	 */
 	protected $toolsManager;
+
+	/**
+	 * AcfComponentManager\Upgrader definition.
+	 *
+	 * @var \AcfComponentManager\Upgrader
+	 */
+	protected $upgrader;
 
 	/**
 	 * Options.
@@ -133,6 +151,9 @@ class AcfComponentManager {
 
 		$this->load_dependencies();
 		$this->define_admin_hooks();
+
+		// Check for updates.
+		$this->check_updates();
 	}
 
 	/**
@@ -147,18 +168,32 @@ class AcfComponentManager {
 		$this->loader = new Loader();
 		$this->componentManager = new ComponentManager();
 		$this->settingsManager = new SettingsManager();
+		$this->sourceManager = new SourceManager();
 		$this->dashboardManager = new DashboardManager();
 		$this->toolsManager = new ToolsManager();
 		$this->noticeManager = new NoticeManager();
+		$this->upgrader = new Upgrader();
+	}
+
+	/**
+	 * Check for updates.
+	 *
+	 * @since 0.0.7
+	 * @access protected
+	 */
+	protected function check_updates() {
+		$available_updates = $this->upgrader->get_upgrades();
+		if ( ! empty( $available_updates ) ) {
+			$this->upgrader->run_upgrades( $available_updates );
+		}
 	}
 
 	/**
 	 * Get 'Options'.
 	 *
 	 * @since 0.0.1
-	 * @access public
 	 *
-	 * @return array $options
+	 * @return array The plugin options.
 	 */
 	public function get_options() {
 
@@ -184,6 +219,7 @@ class AcfComponentManager {
 		$this->loader->add_action( 'acf_component_manager_dashboard', $component_manager, 'dashboard', 10 );
 		$this->loader->add_action( 'acf_component_manager_tools', $component_manager, 'tools', 10, 2 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_components', $component_manager, 'save', 10, 1 );
+		$this->loader->add_action( 'acf_component_manager_deactivate_component_source', $component_manager, 'deactivate_component_source', 10, 1 );
 		$this->loader->add_action( 'acf_component_manager_export_manage_components', $component_manager, 'export', 10, 1 );
 		$this->loader->add_filter( 'acf_component_manager_tabs', $component_manager, 'add_menu_tab', 15 );
 		$this->loader->add_filter( 'acf/json/save_file_name', $component_manager, 'filter_save_filename', 10, 3 );
@@ -204,6 +240,13 @@ class AcfComponentManager {
 		$this->loader->add_action( 'acf_component_manager_dashboard', $settings_manager, 'dashboard', 5 );
 		$this->loader->add_action( 'acf_component_manager_save_manage_settings', $settings_manager, 'save', 10, 1 );
 		$this->loader->add_filter( 'acf_component_manager_tabs', $settings_manager, 'add_menu_tab', 10 );
+
+		$source_manager = $this->sourceManager;
+		$this->loader->add_action( 'acf_component_manager_render_page_manage_sources', $source_manager, 'render_page', 10, 2 );
+		$this->loader->add_action( 'acf_component_manager_dashboard', $source_manager, 'dashboard', 5 );
+		$this->loader->add_filter( 'acf_component_manager_tabs', $source_manager, 'add_menu_tab', 10 );
+		$this->loader->add_action( 'acf_component_manager_save_manage_sources', $source_manager, 'save', 10, 1 );
+		$this->loader->add_action( 'acf_component_manager_delete_manage_sources', $source_manager, 'delete', 10 );
 
 		$notice_manager = $this->noticeManager;
 		$this->loader->add_action( 'admin_init', $notice_manager, 'dismiss_notice' );

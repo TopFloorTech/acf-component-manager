@@ -29,7 +29,7 @@ class ComponentView extends ViewBase {
 	public function view( array $managed_components, array $unmanaged_components, array $missing_components ) {
 
 		if ( empty( $managed_components ) && empty( $unmanaged_components ) ) {
-			print '<p>' . __( 'No theme components found.', 'acf-component-manager' ) . '</p>';
+			print '<p>' . __( 'No components found.', 'acf-component-manager' ) . '</p>';
 		} else {
 			$this->update_action( 'edit' );
 			?>
@@ -40,22 +40,25 @@ class ComponentView extends ViewBase {
 		}
 
 		if ( ! empty( $managed_components ) ) {
-			print '<h3>' . __( 'Managed theme components', 'acf-component-manager' ) . '</h3>';
+			print '<h3>' . __( 'Managed components', 'acf-component-manager' ) . '</h3>';
 			?>
 			<table class="widefat">
 				<thead>
 				<tr>
 					<th>
-						<?php print __( 'Component', 'acf-component-manager' ); ?>
+						<h3><?php print __( 'Component', 'acf-component-manager' ); ?></h3>
 					</th>
 					<th>
-						<?php print __( 'File name', 'acf-component-manager' ); ?>
+						<h3><?php print __( 'Source', 'acf-component-manager' ); ?></h3>
 					</th>
 					<th>
-						<?php print __( 'Field group key', 'acf-component-manager' ); ?>
+						<h3><?php print __( 'File name', 'acf-component-manager' ); ?></h3>
 					</th>
 					<th>
-						<?php print __( 'Enabled', 'acf-component-manager' ); ?>
+						<h3><?php print __( 'Field group key', 'acf-component-manager' ); ?></h3>
+					</th>
+					<th>
+						<h3><?php print __( 'Enabled', 'acf-component-manager' ); ?></h3>
 					</th>
 				</tr>
 				</thead>
@@ -64,6 +67,9 @@ class ComponentView extends ViewBase {
 				<tr>
 					<td class="row-title">
 						<?php print $component['name']; ?>
+					</td>
+					<td>
+						<?php print $component['source_name']; ?>
 					</td>
 					<td>
 						<?php print $component['file']; ?>
@@ -88,12 +94,13 @@ class ComponentView extends ViewBase {
 		}
 
 		if ( ! empty( $unmanaged_components ) ) {
-			print '<h3>' . __( 'Unmanaged theme components', 'acf-component-manager' ) . '</h3>';
+			print '<h3>' . __( 'Unmanaged components', 'acf-component-manager' ) . '</h3>';
 			?>
 			<table class="widefat">
 				<thead>
 				<tr>
-					<th><?php print __( 'Component name', 'acf-component-manager' ); ?></th>
+					<th><h3><?php print __( 'Component', 'acf-component-manager' ); ?></h3></th>
+					<th><h3><?php print __( 'Source', 'acf-component-manager' ); ?></h3></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -101,6 +108,9 @@ class ComponentView extends ViewBase {
 					<tr>
 						<td class="row-title">
 							<?php print $component['name']; ?>
+						</td>
+						<td>
+							<?php print $component['source_name']; ?>
 						</td>
 					</tr>
 				<?php endforeach; ?>
@@ -116,16 +126,16 @@ class ComponentView extends ViewBase {
 				<thead>
 				<tr>
 					<th>
-						<?php print __( 'Component name', 'acf-component-manager' ); ?>
+						<h3><?php print __( 'Component name', 'acf-component-manager' ); ?></h3>
 					</th>
 					<th>
-						<?php print __( 'Field group key', 'acf-component-manager' ); ?>
+						<h3><?php print __( 'Field group key', 'acf-component-manager' ); ?></h3>
 					</th>
 					<th>
-						<?php print __( 'Status', 'acf-component-manager' ); ?>
+						<h3><?php print __( 'Status', 'acf-component-manager' ); ?></h3>
 					</th>
 					<th>
-						<?php print __( 'Post id', 'acf-component-manager' ); ?>
+						<h3><?php print __( 'Post id', 'acf-component-manager' ); ?></h3>
 					</th>
 				</tr>
 				</thead>
@@ -171,10 +181,10 @@ class ComponentView extends ViewBase {
 						<?php print __( 'Component', 'acf-component-manager' ); ?>
 					</th>
 					<th>
-						<?php print __( 'File name', 'acf-component-manager' ); ?>
+						<?php print __( 'Source', 'acf-component-manager' ); ?>
 					</th>
 					<th>
-						<?php print __( 'Enabled', 'acf-component-manager' ); ?>
+						<?php print __( 'File name', 'acf-component-manager' ); ?>
 					</th>
 				</tr>
 				</thead>
@@ -187,21 +197,16 @@ class ComponentView extends ViewBase {
 								<?php endif; ?>
 							</td>
 							<td>
+								<?php if ( isset( $component['source_name'] ) ) : ?>
+									<?php print $component['source_name']; ?>
+								<?php endif; ?>
+							</td>
+							<td>
 								<?php if ( isset( $component['file'] ) ) : ?>
 									<?php print $component['file']; ?>
 								<?php endif; ?>
 							</td>
-							<td>
-								<?php if ( isset( $component['enabled'] ) ) : ?>
-									<?php
-									if ( $component['enabled'] ) {
-										print 'Yes';
-									} else {
-										print 'No';
-									}
-									?>
-								<?php endif; ?>
-							</td>
+
 						</tr>
 					<?php endforeach; ?>
 				</tbody>

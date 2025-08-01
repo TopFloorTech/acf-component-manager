@@ -193,9 +193,17 @@ class Admin {
 	 * Delete items.
 	 *
 	 * @since 2.0.0
-	 * @param string $type The component type to delete.
 	 */
-	public function delete( $type ) {}
+	public function delete() {
+		if ( ! wp_verify_nonce( $_REQUEST['delete'], 'acf_component_manager' ) ) {
+			// Need a notification manager to handle messaging.
+			return;
+		}
+		if ( ! isset( $_REQUEST['callback'] ) ) {
+			return;
+		}
+		do_action( "acf_component_manager_delete_{$_REQUEST['callback']}", $_REQUEST );
+	}
 
 	/**
 	 * Register admin menu.
@@ -228,6 +236,7 @@ class Admin {
 					$this->export();
 					break;
 				case 'delete':
+					$this->delete();
 					break;
 			}
 			wp_redirect( admin_url( 'admin.php?page=' . $this->slug . $this->queryString ) );

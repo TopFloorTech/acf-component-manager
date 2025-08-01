@@ -46,44 +46,6 @@ class SettingsForm extends FormBase {
 						<p class="helper"><em><?php print __( 'Dev mode enables ACF admin and saving components.', 'acf-component-manager' ); ?></em></p>
 					</td>
 				</tr>
-
-				<tr class="form-field">
-					<th class="row">
-						<label form="components_directory">
-							<?php print __( 'Components directory', 'acf-component-manager' ); ?>
-						</label>
-					</th>
-					<td>
-						<input
-							type="text"
-							name="components_directory"
-							id="components_directory"
-							placeholder="components"
-							value="<?php print $settings['components_directory'] ?? ''; ?>"
-							>
-						<p class="helper"><?php print __( 'Directory containing components in the active theme.  Should not contain leading or trailing slashes \'/\'.', 'acf-component-manager' ); ?></p>
-					</td>
-				</tr>
-
-				<tr class="form-field">
-					<th class="row">
-						<label for="file_directory">
-							<?php print __( 'Component ACF file directory', 'acf-component-manager' ); ?>
-						</label>
-					</th>
-					<td>
-						<input
-							type="text"
-							name="file_directory"
-							id="file_directory"
-							placeholder="assets"
-							value="<?php print $settings['file_directory'] ?? ''; ?>"
-							>
-						<p class="helper"><?php print __( 'Directory containing the ACF JSON file, relative to the component. Should not contain leading or trailing slashes \'/\'.', 'acf-component-manager' ); ?></p>
-					</td>
-				</tr>
-
-
 			</table>
 			<p class="submit">
 				<?php submit_button( __( 'Save setting', 'acf-component-manager' ), 'primary', 'submit' ); ?>
